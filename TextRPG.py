@@ -185,18 +185,20 @@ def opening_scene():
 
 def character_creation():
 
-    player_race_dict = {1: "Human",
-                        2: "Elf",
-                        3: "Orc",
-                        4: "Dwarf"
-                        }
+    player_race_dict = {
+        1: "Human",
+        2: "Elf",
+        3: "Orc",
+        4: "Dwarf"
+    }
 
-    player_job_dict = {1: "Warrior",
-                       2: "Knight",
-                       3: "Ranger",
-                       4: "Mage",
-                       5: "Priest"
-                       }
+    player_job_dict = {
+        1: "Warrior",
+        2: "Knight",
+        3: "Ranger",
+        4: "Mage",
+        5: "Priest"
+    }
 
     is_name_final = False
     while not is_name_final:
@@ -248,20 +250,22 @@ def character_creation():
 
 
 if __name__ == '__main__':
-    dict_race = {"Human": ["Human", 125, 3, 8, 6, 5],
-                 "Elf": ["Elf", 100, 4, 12, 5, 3],
-                 "Orc": ["Orc", 200, 2, 6, 9, 7],
-                 "Troll": ["Troll", 250, 1, 2, 15, 10],
-                 "Dwarf": ["Dwarf", 150, 3, 7, 8, 8],
-                 "Kobold": ["Kobold", 70, 3, 9, 4, 2]
-                 }
+    dict_race = {
+        "Human": ["Human", 125, 3, 8, 6, 5],
+        "Elf": ["Elf", 100, 4, 12, 5, 3],
+        "Orc": ["Orc", 200, 2, 6, 9, 7],
+        "Troll": ["Troll", 250, 1, 2, 15, 10],
+        "Dwarf": ["Dwarf", 150, 3, 7, 8, 8],
+        "Kobold": ["Kobold", 70, 3, 9, 4, 2]
+    }
 
-    dict_job = {"Warrior": ["Warrior", 20, 14, 12, 8, 12],
-                "Knight": ["Knight", 16, 7, 20, 10, 13],
-                "Mage": ["Mage", 9, 12, 8, 26, 11],
-                "Ranger": ["Ranger", 11, 18, 10, 12, 15],
-                "Priest": ["Priest", 11, 13, 16, 14, 12]
-                }
+    dict_job = {
+        "Warrior": ["Warrior", 20, 14, 12, 8, 12],
+        "Knight": ["Knight", 16, 7, 20, 10, 13],
+        "Mage": ["Mage", 9, 12, 8, 26, 11],
+        "Ranger": ["Ranger", 11, 18, 10, 12, 15],
+        "Priest": ["Priest", 11, 13, 16, 14, 12]
+    }
 
     main_menu()
     main_menu_input = int(input("> "))
