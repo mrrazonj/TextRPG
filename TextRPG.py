@@ -201,6 +201,7 @@ def character_creation():
     }
 
     is_name_final = False
+    desc_name = ''
     while not is_name_final:
         desc_name = input("Enter your name> ")
         print("You will be known as", desc_name, "throughout the realm.")
@@ -209,30 +210,29 @@ def character_creation():
         if name_finalization_input == 'y':
             is_name_final = True
 
-    specs_dict = {'race': player_race_dict, 'job': player_job_dict}
+    specs_2d = [['race', player_race_dict], ['job', player_job_dict]]
     specs_list = []
-    for key, value_dict in specs_dict:
-        is_option_final = False
-        while not is_option_final:
-            print("Now, you must choose your {}:".format(key))
-            for i in value_dict:
-                print(i, value_dict[i])
+    for spec, spec_dict in specs_2d:
+        is_desc_final = False
+        while not is_desc_final:
+            print("Now, you must choose your {}:".format(spec))
+            for i in spec_dict:
+                print(i, spec_dict[i])
 
-            race_selected = int(input("> "))
-            if race_selected > len(value_dict) or race_selected < 1:
+            spec_selected = int(input("> "))
+            if spec_selected > len(spec_dict) or spec_selected < 1:
                 print("You have entered an invalid number, please try again")
                 continue
             else:
-                desc = value_dict[race_selected]
+                desc = spec_dict[spec_selected]
                 specs_list.append(desc)
 
-            print("You have selected", desc, "as your {}.".format(key))
-            race_finalization_input = input("You cannot change your {} beyond this point, continue? (y/n) > ".format(key))
-            if race_finalization_input == 'y':
-                is_option_final = True
+            print("You have selected", desc, "as your {}.".format(spec))
+            finalization_input = input("You cannot change your {} beyond this point, continue? (y/n) > ".format(spec))
+            if finalization_input == 'y':
+                is_desc_final = True
 
-    character_creation_data = [1, *specs_list]
-    return character_creation_data
+    return [1, desc_name, *specs_list]
 
 
 if __name__ == '__main__':
