@@ -185,83 +185,71 @@ def opening_scene():
 
 def character_creation():
 
-    player_race_dict = {1: "Human",
-                        2: "Elf",
-                        3: "Orc",
-                        4: "Dwarf"
-                        }
+    player_race_dict = {
+        1: "Human",
+        2: "Elf",
+        3: "Orc",
+        4: "Dwarf"
+    }
 
-    player_job_dict = {1: "Warrior",
-                       2: "Knight",
-                       3: "Ranger",
-                       4: "Mage",
-                       5: "Priest"
-                       }
+    player_job_dict = {
+        1: "Warrior",
+        2: "Knight",
+        3: "Ranger",
+        4: "Mage",
+        5: "Priest"
+    }
 
     is_name_final = False
+    desc_name = ''
     while not is_name_final:
         desc_name = input("Enter your name> ")
         print("You will be known as", desc_name, "throughout the realm.")
 
         name_finalization_input = input("You cannot change your name beyond this point, continue? (y/n) > ")
-        if name_finalization_input == 'y':
-            is_name_final = True
+        is_name_final = True if name_finalization_input == 'y' else False
 
-    is_race_final = False
-    while not is_race_final:
-        print("Now, you must choose your race:")
-        for i in player_race_dict:
-            print(i, player_race_dict[i])
+    specs_2d = [['race', player_race_dict], ['job', player_job_dict]]
+    specs_list = []
+    for spec, spec_dict in specs_2d:
+        is_desc_final = False
+        while not is_desc_final:
+            print("Now, you must choose your {}:".format(spec))
+            for i in spec_dict:
+                print(i, spec_dict[i])
 
-        race_selected = int(input("> "))
-        if race_selected > len(player_race_dict) or race_selected < 1:
-            print("You have entered an invalid number, please try again")
-            continue
-        else:
-            desc_race = player_race_dict[race_selected]
+            spec_selected = int(input("> "))
+            if spec_selected > len(spec_dict) or spec_selected < 1:
+                print("You have entered an invalid number, please try again")
+                continue
+            else:
+                desc = spec_dict[spec_selected]
+                specs_list.append(desc)
 
-        print("You have selected", desc_race, "as your race.")
-        race_finalization_input = input("You cannot change your race beyond this point, continue? (y/n) > ")
-        if race_finalization_input == 'y':
-            is_race_final = True
+            print("You have selected", desc, "as your {}.".format(spec))
+            finalization_input = input("You cannot change your {} beyond this point, continue? (y/n) > ".format(spec))
+            is_desc_final = True if finalization_input == 'y' else False
 
-    is_job_final = False
-    while not is_job_final:
-        print("Finally, you must choose your job:")
-        for i in player_job_dict:
-            print(i, player_job_dict[i])
-
-        job_selected = int(input("> "))
-        if job_selected > len(player_job_dict) or job_selected < 1:
-            print("You have entered an invalid number, please try again")
-            continue
-        else:
-            desc_job = player_job_dict[job_selected]
-
-        print("You have selected", desc_job, "as your race.")
-        job_finalization_input = input("You cannot change your job beyond this point, continue? (y/n) > ")
-        if job_finalization_input == 'y':
-            is_job_final = True
-
-    character_creation_data = [1, desc_name, desc_race, desc_job]
-    return character_creation_data
+    return [1, desc_name, *specs_list]
 
 
 if __name__ == '__main__':
-    dict_race = {"Human": ["Human", 125, 3, 8, 6, 5],
-                 "Elf": ["Elf", 100, 4, 12, 5, 3],
-                 "Orc": ["Orc", 200, 2, 6, 9, 7],
-                 "Troll": ["Troll", 250, 1, 2, 15, 10],
-                 "Dwarf": ["Dwarf", 150, 3, 7, 8, 8],
-                 "Kobold": ["Kobold", 70, 3, 9, 4, 2]
-                 }
+    dict_race = {
+        "Human": ["Human", 125, 3, 8, 6, 5],
+        "Elf": ["Elf", 100, 4, 12, 5, 3],
+        "Orc": ["Orc", 200, 2, 6, 9, 7],
+        "Troll": ["Troll", 250, 1, 2, 15, 10],
+        "Dwarf": ["Dwarf", 150, 3, 7, 8, 8],
+        "Kobold": ["Kobold", 70, 3, 9, 4, 2]
+    }
 
-    dict_job = {"Warrior": ["Warrior", 20, 14, 12, 8, 12],
-                "Knight": ["Knight", 16, 7, 20, 10, 13],
-                "Mage": ["Mage", 9, 12, 8, 26, 11],
-                "Ranger": ["Ranger", 11, 18, 10, 12, 15],
-                "Priest": ["Priest", 11, 13, 16, 14, 12]
-                }
+    dict_job = {
+        "Warrior": ["Warrior", 20, 14, 12, 8, 12],
+        "Knight": ["Knight", 16, 7, 20, 10, 13],
+        "Mage": ["Mage", 9, 12, 8, 26, 11],
+        "Ranger": ["Ranger", 11, 18, 10, 12, 15],
+        "Priest": ["Priest", 11, 13, 16, 14, 12]
+    }
 
     main_menu()
     main_menu_input = int(input("> "))
