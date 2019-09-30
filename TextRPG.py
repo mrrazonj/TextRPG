@@ -178,6 +178,10 @@ def main_menu():
     print("3. Quit")
 
 
+def opening_scene():
+    pass
+
+
 if __name__ == '__main__':
     dict_race = {"Human": ["Human", "", 125, 3, 8, 6, 5],
                  "Elf": ["Elf", "", 100, 4, 12, 5, 3],
@@ -195,3 +199,11 @@ if __name__ == '__main__':
                 }
 
     main_menu()
+    main_menu_input = int(input("> "))
+
+    if main_menu_input == 1:
+        opening_scene()
+    elif main_menu_input == 2:
+        pass
+    else:
+        pass
