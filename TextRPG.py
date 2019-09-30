@@ -209,43 +209,29 @@ def character_creation():
         if name_finalization_input == 'y':
             is_name_final = True
 
-    is_race_final = False
-    while not is_race_final:
-        print("Now, you must choose your race:")
-        for i in player_race_dict:
-            print(i, player_race_dict[i])
+    specs_dict = {'race': player_race_dict, 'job': player_job_dict}
+    specs_list = []
+    for key, value_dict in specs_dict:
+        is_option_final = False
+        while not is_option_final:
+            print("Now, you must choose your {}:".format(key))
+            for i in value_dict:
+                print(i, value_dict[i])
 
-        race_selected = int(input("> "))
-        if race_selected > len(player_race_dict) or race_selected < 1:
-            print("You have entered an invalid number, please try again")
-            continue
-        else:
-            desc_race = player_race_dict[race_selected]
+            race_selected = int(input("> "))
+            if race_selected > len(value_dict) or race_selected < 1:
+                print("You have entered an invalid number, please try again")
+                continue
+            else:
+                desc = value_dict[race_selected]
+                specs_list.append(desc)
 
-        print("You have selected", desc_race, "as your race.")
-        race_finalization_input = input("You cannot change your race beyond this point, continue? (y/n) > ")
-        if race_finalization_input == 'y':
-            is_race_final = True
+            print("You have selected", desc, "as your {}.".format(key))
+            race_finalization_input = input("You cannot change your {} beyond this point, continue? (y/n) > ".format(key))
+            if race_finalization_input == 'y':
+                is_option_final = True
 
-    is_job_final = False
-    while not is_job_final:
-        print("Finally, you must choose your job:")
-        for i in player_job_dict:
-            print(i, player_job_dict[i])
-
-        job_selected = int(input("> "))
-        if job_selected > len(player_job_dict) or job_selected < 1:
-            print("You have entered an invalid number, please try again")
-            continue
-        else:
-            desc_job = player_job_dict[job_selected]
-
-        print("You have selected", desc_job, "as your race.")
-        job_finalization_input = input("You cannot change your job beyond this point, continue? (y/n) > ")
-        if job_finalization_input == 'y':
-            is_job_final = True
-
-    character_creation_data = [1, desc_name, desc_race, desc_job]
+    character_creation_data = [1, *specs_list]
     return character_creation_data
 
 
