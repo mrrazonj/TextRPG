@@ -273,7 +273,6 @@ if __name__ == '__main__':
         player = Player(character_data[0], character_data[1], *dict_race[character_data[2]],
                         *dict_job[character_data[3]])
         player.show_stats()
-
     elif main_menu_input == 2:
         pass
     else:
