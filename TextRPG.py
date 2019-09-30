@@ -1,7 +1,6 @@
 class Entity:
-    def __init__(self, base_hp, base_ap, base_spd, base_atk, base_def,
-                 stat_str, stat_dex, stat_con, stat_int, stat_luk,
-                 desc_name, desc_race, desc_job, level):
+    def __init__(self, level, desc_race, desc_name, base_hp, base_ap, base_spd, base_atk, base_def,
+                 desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk):
         self.base_hp = base_hp
         self.base_ap = base_ap
         self.base_spd = base_spd
@@ -58,61 +57,26 @@ class Entity:
         print(self.stat_luk)
         print("========================================")
 
-    def get_hp(self):
-        return self.combat_hp
-
-    def get_ap(self):
-        return self.combat_ap
-
-    def get_spd(self):
-        return self.combat_spd
-
-    def get_atk(self):
-        return self.combat_atk
-
-    def get_def(self):
-        return self.combat_def
-
-    def set_hp(self, value):
-        self.combat_hp += value
-
-    def set_ap(self, value):
-        self.combat_ap += value
-
-    def set_spd(self, value):
-        self.combat_spd += value
-
-    def set_atk(self, value):
-        self.combat_atk += value
-
-    def set_def(self, value):
-        self.combat_def += value
-
 
 class Enemy(Entity):
-    def __init__(self, base_hp, base_ap, base_spd, base_atk, base_def,
-                 stat_str, stat_dex, stat_con, stat_int, stat_luk,
-                 desc_name, desc_race, desc_job, level, item_id1, item_id2, item_id3, item_id4, item_id5):
-        super().__init__(base_hp, base_ap, base_spd, base_atk, base_def,
-                         stat_str, stat_dex, stat_con, stat_int, stat_luk,
-                         desc_name, desc_race, desc_job, level)
+    def __init__(self, level, desc_race, desc_name, base_hp, base_ap, base_spd, base_atk, base_def,
+                 desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk, loot1, loot2, loot3, loot4, loot5):
+        super().__init__(level, desc_race, desc_name, base_hp, base_ap, base_spd, base_atk, base_def,
+                         desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk)
 
-        self.loot_id = [item_id1, item_id2, item_id3, item_id4, item_id5]
+        self.loot_id = [loot1, loot2, loot3, loot4, loot5]
 
     def get_loot(self, select_item):
         return self.loot_id[select_item]
 
 
 class Player(Entity):
-    def __init__(self, base_hp, base_ap, base_spd, base_atk, base_def,
-                 stat_str, stat_dex, stat_con, stat_int, stat_luk,
-                 desc_name, desc_race, desc_job, level):
-        super().__init__(base_hp, base_ap, base_spd, base_atk, base_def,
-                         stat_str, stat_dex, stat_con, stat_int, stat_luk,
-                         desc_name, desc_race, desc_job, level)
+    def __init__(self, level, desc_race, desc_name, base_hp, base_ap, base_spd, base_atk, base_def,
+                 desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk):
+        super().__init__(level, desc_race, desc_name, base_hp, base_ap, base_spd, base_atk, base_def,
+                         desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk)
 
         self.experience = 0
-
         self.inventory = []
         self.skill = []
 
@@ -199,5 +163,35 @@ class Player(Entity):
         self.combat_def -= def_bonus
 
 
+def main_menu():
+    print("▄▄▄█████▓▓█████  ██▀███   ███▄ ▄███▓ ██▓ ███▄    █  ▄▄▄       ██▓        ██▀███  ▓█████ ██▒   █▓▓█████  ██▀███   ██▓▓█████ ")
+    print("▓  ██▒ ▓▒▓█   ▀ ▓██ ▒ ██▒▓██▒▀█▀ ██▒▓██▒ ██ ▀█   █ ▒████▄    ▓██▒       ▓██ ▒ ██▒▓█   ▀▓██░   █▒▓█   ▀ ▓██ ▒ ██▒▓██▒▓█   ▀ ")
+    print("▒ ▓██░ ▒░▒███   ▓██ ░▄█ ▒▓██    ▓██░▒██▒▓██  ▀█ ██▒▒██  ▀█▄  ▒██░       ▓██ ░▄█ ▒▒███   ▓██  █▒░▒███   ▓██ ░▄█ ▒▒██▒▒███   ")
+    print("░ ▓██▓ ░ ▒▓█  ▄ ▒██▀▀█▄  ▒██    ▒██ ░██░▓██▒  ▐▌██▒░██▄▄▄▄██ ▒██░       ▒██▀▀█▄  ▒▓█  ▄  ▒██ █░░▒▓█  ▄ ▒██▀▀█▄  ░██░▒▓█  ▄ ")
+    print("  ▒██▒ ░ ░▒████▒░██▓ ▒██▒▒██▒   ░██▒░██░▒██░   ▓██░ ▓█   ▓██▒░██████▒   ░██▓ ▒██▒░▒████▒  ▒▀█░  ░▒████▒░██▓ ▒██▒░██░░▒████▒")
+    print("  ▒ ░░   ░░ ▒░ ░░ ▒▓ ░▒▓░░ ▒░   ░  ░░▓  ░ ▒░   ▒ ▒  ▒▒   ▓▒█░░ ▒░▓  ░   ░ ▒▓ ░▒▓░░░ ▒░ ░  ░ ▐░  ░░ ▒░ ░░ ▒▓ ░▒▓░░▓  ░░ ▒░ ░")
+    print("    ░     ░ ░  ░  ░▒ ░ ▒░░  ░      ░ ▒ ░░ ░░   ░ ▒░  ▒   ▒▒ ░░ ░ ▒  ░     ░▒ ░ ▒░ ░ ░  ░  ░ ░░   ░ ░  ░  ░▒ ░ ▒░ ▒ ░ ░ ░  ░")
+    print("  ░         ░     ░░   ░ ░      ░    ▒ ░   ░   ░ ░   ░   ▒     ░ ░        ░░   ░    ░       ░░     ░     ░░   ░  ▒ ░   ░   ")
+    print("            ░  ░   ░            ░    ░           ░       ░  ░    ░  ░      ░        ░  ░     ░     ░  ░   ░      ░     ░  ░")
+    print("                                                                                            ░                              ")
+    print("1. New Game\t\t2.Continue")
+    print("3. Quit")
+
+
 if __name__ == '__main__':
-    pass
+    dict_race = {"Human": ["Human", "", 125, 3, 8, 6, 5],
+                 "Elf": ["Elf", "", 100, 4, 12, 5, 3],
+                 "Orc": ["Orc", "", 200, 2, 6, 9, 7],
+                 "Troll": ["Troll", "", 250, 1, 2, 15, 10],
+                 "Dwarf": ["Dwarf", "", 150, 3, 7, 8, 8],
+                 "Kobold": ["Kobold", "", 70, 3, 9, 4, 2]
+                 }
+
+    dict_job = {"Warrior": ["Warrior", 20, 14, 12, 8, 12],
+                "Knight": ["Knight", 16, 7, 20, 10, 13],
+                "Mage": ["Mage", 9, 12, 8, 26, 11],
+                "Ranger": ["Ranger", 11, 18, 10, 12, 15],
+                "Priest": ["Priest", 11, 13, 16, 14, 12]
+                }
+
+    main_menu()
