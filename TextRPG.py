@@ -207,8 +207,7 @@ def character_creation():
         print("You will be known as", desc_name, "throughout the realm.")
 
         name_finalization_input = input("You cannot change your name beyond this point, continue? (y/n) > ")
-        if name_finalization_input == 'y':
-            is_name_final = True
+        is_name_final = True if name_finalization_input == 'y' else False
 
     specs_2d = [['race', player_race_dict], ['job', player_job_dict]]
     specs_list = []
@@ -229,8 +228,7 @@ def character_creation():
 
             print("You have selected", desc, "as your {}.".format(spec))
             finalization_input = input("You cannot change your {} beyond this point, continue? (y/n) > ".format(spec))
-            if finalization_input == 'y':
-                is_desc_final = True
+            is_desc_final = True if finalization_input == 'y' else False
 
     return [1, desc_name, *specs_list]
 
