@@ -1,3 +1,21 @@
+import random
+from os import system, name
+
+
+def clear():
+    if name == "nt":
+        _ = system("cls")
+    else:
+        _ = system("clear")
+
+
+def pause():
+    if name == "nt":
+        _ = system("pause")
+    else:
+        _ = input()
+
+
 class Entity:
     def __init__(self, level, desc_name, desc_race, base_hp, base_ap, base_spd, base_atk, base_def,
                  desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk):
@@ -28,6 +46,7 @@ class Entity:
         self.level = level
 
     def show_stats(self):
+        clear()
         print("========================================")
         print(self.desc_name)
         print("Lv", end='')
@@ -57,6 +76,7 @@ class Entity:
         print("Luk: ", end='')
         print(self.stat_luk)
         print("========================================")
+        pause()
 
 
 class Enemy(Entity):
@@ -196,32 +216,106 @@ def character_creation():
     is_name_final = False
     desc_name = ''
     while not is_name_final:
+        clear()
         desc_name = input("Enter your name> ")
+        clear()
         print("You will be known as", desc_name, "throughout the realm.")
 
         name_finalization_input = input("You cannot change your name beyond this point, continue? (y/n) > ")
         is_name_final = True if name_finalization_input == 'y' else False
 
-        specs_2d = [['race', dict_race_selection], ['job', dict_job_selection]]
-        specs_list = []
-        for spec, spec_dict in specs_2d:
-            is_desc_final = False
-            while not is_desc_final:
-                print(f"Now you must choose your {spec}")
-                for i in spec_dict:
-                    print(i, spec_dict[i])
-                spec_selected = int(input("> "))
-                if spec_selected > len(spec_dict) or spec_selected < 1:
-                    print("You have entered an invalid number, please try again.")
-                    continue
-                else:
-                    print(f"You have selected {spec_dict[spec_selected]} as your {spec}.")
-                    finalization_input = input(f"You cannot change your {spec} beyond this point, continue? (y/n) >")
-                    if finalization_input == 'y':
-                        is_desc_final = True
-                        specs_list.append(spec_dict[spec_selected])
+    specs_2d = [['race', dict_race_selection], ['job', dict_job_selection]]
+    specs_list = []
+    for spec, spec_dict in specs_2d:
+        is_desc_final = False
+        while not is_desc_final:
+            clear()
+            print(f"Now you must choose your {spec}")
+            for i in spec_dict:
+                print(i, spec_dict[i])
+            spec_selected = int(input("> "))
+            clear()
+            if spec_selected > len(spec_dict) or spec_selected < 1:
+                print("You have entered an invalid number, please try again.")
+                continue
+            else:
+                print(f"You have selected {spec_dict[spec_selected]} as your {spec}.")
+                finalization_input = input(f"You cannot change your {spec} beyond this point, continue? (y/n) >")
+                if finalization_input == 'y':
+                    is_desc_final = True
+                    specs_list.append(spec_dict[spec_selected])
 
     return [1, desc_name, *specs_list]
+
+
+def travel(place_name, place_id):
+    dict_place_selection = {}
+    for i, key in enumerate(dict_place):
+        dict_place_selection[i+1] = key
+
+    is_correct_input = False
+    while not is_correct_input:
+        print(f"You are currently in {place_name}, Where would you like to go?")
+        for i in range(place_id-1, place_id+2):
+            if place_id-1 < 1:
+                print("1 Cainta")
+                print("2 Cainta Prairie")
+                break
+            elif place_id+1 > len(dict_place):
+                print("9 Binangonan")
+                print("10 Binangonan Ruins")
+                break
+            else:
+                print(i, dict_place_selection[i])
+        selection = int(input("> "))
+        if selection > place_id+1 or selection < place_id-1:
+            print("You have entered an invalid number, please try again.")
+        else:
+            is_correct_input = True
+            world_menu(*dict_place[dict_place_selection[selection]])
+
+
+def world_menu(place_name, place_type, place_id, place_level):
+    list_town_selection = [
+        "Manage character",
+        "Go to shop",
+        "Travel"
+    ]
+
+    list_dungeon_selection = [
+        "Hunt Boss Monster",
+        "Hunt Normal Monsters",
+        "Travel"
+    ]
+
+    is_correct_input = False
+    while not is_correct_input:
+        clear()
+        print(f"You are now in the {place_type} of {place_name}")
+
+        if place_type == "town":
+            for i, value in enumerate(list_town_selection):
+                print(i+1, value)
+            selection = int(input("> "))
+            if selection == 1:
+                is_correct_input = True
+            elif selection == 2:
+                is_correct_input = True
+            elif selection == 3:
+                is_correct_input = True
+                travel(place_name, place_id)
+
+        else:
+            for i, value in enumerate(list_dungeon_selection):
+                print(i+1, value)
+            selection = int(input("> "))
+            if selection == 1:
+                is_correct_input = True
+            elif selection == 2:
+                is_correct_input = True
+            elif selection == 3:
+                is_correct_input = True
+                travel(place_name, place_id)
 
 
 if __name__ == '__main__':
@@ -242,8 +336,22 @@ if __name__ == '__main__':
         "Priest": ["Priest", 11, 13, 16, 14, 12]
     }
 
+    dict_place = {
+        "Cainta": ["Cainta", "town", 1, 1],
+        "Cainta Prairie": ["Cainta Prairie", "dungeon", 2, 1],
+        "Taytay": ["Taytay", "town", 3, 11],
+        "Taytay Caverns": ["Taytay Caverns", "dungeon", 4, 11],
+        "Antipolo": ["Antipolo", "town", 5, 21],
+        "Antipolo Peaks": ["Antipolo Peaks", "dungeon", 6, 21],
+        "Angono": ["Angono", "town", 7, 31],
+        "Angono Sanctuary": ["Angono Sanctuary", "dungeon", 8, 31],
+        "Binangonan": ["Binangonan", "town", 9, 40],
+        "Binangonan Ruins": ["Binangonan Ruins", "dungeon", 10, 40]
+    }
+
     main_menu()
     main_menu_input = int(input("> "))
+    clear()
 
     if main_menu_input == 1:
         opening_scene()
@@ -252,6 +360,7 @@ if __name__ == '__main__':
         player = Player(character_data[0], character_data[1], *dict_race[character_data[2]],
                         *dict_job[character_data[3]])
         player.show_stats()
+        world_menu(*dict_place["Cainta"])
 
     elif main_menu_input == 2:
         pass
