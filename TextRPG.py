@@ -185,20 +185,13 @@ def opening_scene():
 
 def character_creation():
 
-    player_race_dict = {
-        1: "Human",
-        2: "Elf",
-        3: "Orc",
-        4: "Dwarf"
-    }
+    dict_race_selection = {}
+    for i, key in enumerate(dict_race):
+        dict_race_selection[i+1] = key
 
-    player_job_dict = {
-        1: "Warrior",
-        2: "Knight",
-        3: "Ranger",
-        4: "Mage",
-        5: "Priest"
-    }
+    dict_job_selection = {}
+    for i, key in enumerate(dict_job):
+        dict_job_selection[i+1] = key
 
     is_name_final = False
     desc_name = ''
@@ -209,26 +202,24 @@ def character_creation():
         name_finalization_input = input("You cannot change your name beyond this point, continue? (y/n) > ")
         is_name_final = True if name_finalization_input == 'y' else False
 
-    specs_2d = [['race', player_race_dict], ['job', player_job_dict]]
-    specs_list = []
-    for spec, spec_dict in specs_2d:
-        is_desc_final = False
-        while not is_desc_final:
-            print("Now, you must choose your {}:".format(spec))
-            for i in spec_dict:
-                print(i, spec_dict[i])
-
-            spec_selected = int(input("> "))
-            if spec_selected > len(spec_dict) or spec_selected < 1:
-                print("You have entered an invalid number, please try again")
-                continue
-            else:
-                desc = spec_dict[spec_selected]
-                specs_list.append(desc)
-
-            print("You have selected", desc, "as your {}.".format(spec))
-            finalization_input = input("You cannot change your {} beyond this point, continue? (y/n) > ".format(spec))
-            is_desc_final = True if finalization_input == 'y' else False
+        specs_2d = [['race', dict_race_selection], ['job', dict_job_selection]]
+        specs_list = []
+        for spec, spec_dict in specs_2d:
+            is_desc_final = False
+            while not is_desc_final:
+                print(f"Now you must choose your {spec}")
+                for i in spec_dict:
+                    print(i, spec_dict[i])
+                spec_selected = int(input("> "))
+                if spec_selected > len(spec_dict) or spec_selected < 1:
+                    print("You have entered an invalid number, please try again.")
+                    continue
+                else:
+                    print(f"You have selected {spec_dict[spec_selected]} as your {spec}.")
+                    finalization_input = input(f"You cannot change your {spec} beyond this point, continue? (y/n) >")
+                    if finalization_input == 'y':
+                        is_desc_final = True
+                        specs_list.append(spec_dict[spec_selected])
 
     return [1, desc_name, *specs_list]
 
@@ -266,3 +257,4 @@ if __name__ == '__main__':
         pass
     else:
         pass
+
