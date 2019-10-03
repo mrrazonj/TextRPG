@@ -32,14 +32,7 @@ class Entity:
         self.stat_int = stat_int
         self.stat_luk = stat_luk
 
-        self.combat_hp = base_hp + (stat_str * 30) + (stat_con * 55)
-        self.combat_ap = int(base_ap + (stat_dex * 0.03))
-        self.combat_spd = base_spd + (stat_dex * 1)
-        if self.stat_str * 5 > self.stat_int * 3:
-            self.combat_atk = base_atk + (stat_str * 5)
-        else:
-            self.combat_atk = base_atk + (stat_int * 3)
-        self.combat_def = base_def + (stat_con * 4)
+        self.init_stats()
 
         self.desc_name = desc_name
         self.desc_race = desc_race
@@ -79,6 +72,16 @@ class Entity:
         print("========================================")
         pause()
 
+    def init_stats(self):
+        self.combat_hp = self.base_hp + (self.stat_str * 30) + (self.stat_con * 55)
+        self.combat_ap = self.base_ap + int(self.stat_dex * 0.03)
+        self.combat_spd = self.base_spd + (self.stat_dex * 1)
+        if self.stat_str * 5 > self.stat_int * 3:
+            self.combat_atk = self.base_atk + (self.stat_str * 5)
+        else:
+            self.combat_atk = self.base_atk + (self.stat_int * 3)
+        self.combat_def = self.base_def + (self.stat_con * 4)
+
 
 class Enemy(Entity):
     def __init__(self, level, desc_name, desc_race, base_hp, base_ap, base_spd, base_atk, base_def,
@@ -87,6 +90,35 @@ class Enemy(Entity):
                          desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk)
 
         loot_dropped = loot
+
+    dict_job_level_modifiers = {
+        "Warrior": [4, 3, 1, 1, 1],
+        "Knight": [2, 1, 5, 1, 1],
+        "Ranger": [1, 5, 1, 1, 2],
+        "Mage": [1, 1, 1, 6, 1],
+        "Priest": [2, 2, 2, 2, 2]
+    }
+
+    def update_stats(self):
+        dict_job_level_modifiers = {
+            "Warrior": [4, 3, 1, 1, 1],
+            "Knight": [2, 1, 5, 1, 1],
+            "Ranger": [1, 5, 1, 1, 2],
+            "Mage": [1, 1, 1, 6, 1],
+            "Priest": [2, 2, 2, 2, 2]
+        }
+
+        list_attributes = [self.stat_str, self.stat_dex, self.stat_con, self.stat_int, self.stat_luk]
+
+        for i, value in enumerate(dict_job_level_modifiers[self.desc_job]):
+            list_attributes[i] += value * self.level
+        self.stat_str = list_attributes[0]
+        self.stat_dex = list_attributes[1]
+        self.stat_con = list_attributes[2]
+        self.stat_int = list_attributes[3]
+        self.stat_luk = list_attributes[4]
+
+        self.init_stats()
 
 
 class Player(Entity):
@@ -313,6 +345,8 @@ def world_menu(place_name, place_type, place_id, place_level):
                 is_correct_input = True
                 enemy = Enemy(*spawn_monster(place_level, place_id))
                 enemy.show_stats()
+                enemy.update_stats()
+                enemy.show_stats()
             elif selection == 3:
                 is_correct_input = True
                 travel(place_name, place_id)
@@ -391,6 +425,7 @@ if __name__ == '__main__':
         9: [50, 0, 3, 0, 12, 9, "Unremarkable Robe"],
         10: [100, 0, 3, 0, 18, 10, "Unblessed Vestments"]
     }
+
     dict_item_id = defaultdict(lambda: [0, 0, 0, 0, 0, 0, "Empty"])
 
     main_menu()
