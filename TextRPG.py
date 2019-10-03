@@ -1,3 +1,22 @@
+from os import system, name
+from collections import defaultdict
+import random
+
+
+def clear():
+    if name == "nt":
+        _ = system("cls")
+    else:
+        _ = system("clear")
+
+
+def pause():
+    if name == "nt":
+        _ = system("pause")
+    else:
+        _ = input()
+
+
 class Entity:
     def __init__(self, level, desc_name, desc_race, base_hp, base_ap, base_spd, base_atk, base_def,
                  desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk):
@@ -13,14 +32,7 @@ class Entity:
         self.stat_int = stat_int
         self.stat_luk = stat_luk
 
-        self.combat_hp = base_hp + (stat_str * 30) + (stat_con * 55)
-        self.combat_ap = int(base_ap + (stat_dex * 0.03))
-        self.combat_spd = base_spd + (stat_dex * 1)
-        if self.stat_str * 5 > self.stat_int * 3:
-            self.combat_atk = base_atk + (stat_str * 5)
-        else:
-            self.combat_atk = base_atk + (stat_int * 3)
-        self.combat_def = base_def + (stat_con * 4)
+        self.init_stats()
 
         self.desc_name = desc_name
         self.desc_race = desc_race
@@ -28,6 +40,7 @@ class Entity:
         self.level = level
 
     def show_stats(self):
+        clear()
         print("========================================")
         print(self.desc_name)
         print("Lv", end='')
@@ -57,18 +70,55 @@ class Entity:
         print("Luk: ", end='')
         print(self.stat_luk)
         print("========================================")
+        pause()
+
+    def init_stats(self):
+        self.combat_hp = self.base_hp + (self.stat_str * 30) + (self.stat_con * 55)
+        self.combat_ap = self.base_ap + int(self.stat_dex * 0.03)
+        self.combat_spd = self.base_spd + (self.stat_dex * 1)
+        if self.stat_str * 5 > self.stat_int * 3:
+            self.combat_atk = self.base_atk + (self.stat_str * 5)
+        else:
+            self.combat_atk = self.base_atk + (self.stat_int * 3)
+        self.combat_def = self.base_def + (self.stat_con * 4)
 
 
 class Enemy(Entity):
     def __init__(self, level, desc_name, desc_race, base_hp, base_ap, base_spd, base_atk, base_def,
-                 desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk, loot1, loot2, loot3, loot4, loot5):
+                 desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk, loot):
         super().__init__(level, desc_name, desc_race, base_hp, base_ap, base_spd, base_atk, base_def,
                          desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk)
 
-        self.loot_id = [loot1, loot2, loot3, loot4, loot5]
+        loot_dropped = loot
 
-    def get_loot(self, select_item):
-        return self.loot_id[select_item]
+    dict_job_level_modifiers = {
+        "Warrior": [4, 3, 1, 1, 1],
+        "Knight": [2, 1, 5, 1, 1],
+        "Ranger": [1, 5, 1, 1, 2],
+        "Mage": [1, 1, 1, 6, 1],
+        "Priest": [2, 2, 2, 2, 2]
+    }
+
+    def update_stats(self):
+        dict_job_level_modifiers = {
+            "Warrior": [4, 3, 1, 1, 1],
+            "Knight": [2, 1, 5, 1, 1],
+            "Ranger": [1, 5, 1, 1, 2],
+            "Mage": [1, 1, 1, 6, 1],
+            "Priest": [2, 2, 2, 2, 2]
+        }
+
+        list_attributes = [self.stat_str, self.stat_dex, self.stat_con, self.stat_int, self.stat_luk]
+
+        for i, value in enumerate(dict_job_level_modifiers[self.desc_job]):
+            list_attributes[i] += value * self.level
+        self.stat_str = list_attributes[0]
+        self.stat_dex = list_attributes[1]
+        self.stat_con = list_attributes[2]
+        self.stat_int = list_attributes[3]
+        self.stat_luk = list_attributes[4]
+
+        self.init_stats()
 
 
 class Player(Entity):
@@ -196,36 +246,140 @@ def character_creation():
     is_name_final = False
     desc_name = ''
     while not is_name_final:
+        clear()
         desc_name = input("Enter your name> ")
+        clear()
         print("You will be known as", desc_name, "throughout the realm.")
 
         name_finalization_input = input("You cannot change your name beyond this point, continue? (y/n) > ")
         is_name_final = True if name_finalization_input == 'y' else False
 
-        specs_2d = [['race', dict_race_selection], ['job', dict_job_selection]]
-        specs_list = []
-        for spec, spec_dict in specs_2d:
-            is_desc_final = False
-            while not is_desc_final:
-                print(f"Now you must choose your {spec}")
-                for i in spec_dict:
-                    print(i, spec_dict[i])
-                spec_selected = int(input("> "))
-                if spec_selected > len(spec_dict) or spec_selected < 1:
-                    print("You have entered an invalid number, please try again.")
-                    continue
-                else:
-                    print(f"You have selected {spec_dict[spec_selected]} as your {spec}.")
-                    finalization_input = input(f"You cannot change your {spec} beyond this point, continue? (y/n) >")
-                    if finalization_input == 'y':
-                        is_desc_final = True
-                        specs_list.append(spec_dict[spec_selected])
+    specs_2d = [['race', dict_race_selection], ['job', dict_job_selection]]
+    specs_list = []
+    for spec, spec_dict in specs_2d:
+        is_desc_final = False
+        while not is_desc_final:
+            clear()
+            print(f"Now you must choose your {spec}")
+            for i in spec_dict:
+                print(i, spec_dict[i])
+            spec_selected = int(input("> "))
+            clear()
+            if spec_selected > len(spec_dict) or spec_selected < 1:
+                print("You have entered an invalid number, please try again.")
+                continue
+            else:
+                print(f"You have selected {spec_dict[spec_selected]} as your {spec}.")
+                finalization_input = input(f"You cannot change your {spec} beyond this point, continue? (y/n) >")
+                if finalization_input == 'y':
+                    is_desc_final = True
+                    specs_list.append(spec_dict[spec_selected])
 
     return [1, desc_name, *specs_list]
 
 
+def travel(place_name, place_id):
+    dict_place_selection = {}
+    for i, key in enumerate(dict_place):
+        dict_place_selection[i+1] = key
+
+    is_correct_input = False
+    while not is_correct_input:
+        print(f"You are currently in {place_name}, Where would you like to go?")
+        for i in range(place_id-1, place_id+2):
+            if place_id-1 < 1:
+                print("1 Cainta")
+                print("2 Cainta Prairie")
+                break
+            elif place_id+1 > len(dict_place):
+                print("9 Binangonan")
+                print("10 Binangonan Ruins")
+                break
+            else:
+                print(i, dict_place_selection[i])
+        selection = int(input("> "))
+        if selection > place_id+1 or selection < place_id-1:
+            print("You have entered an invalid number, please try again.")
+        else:
+            is_correct_input = True
+            world_menu(*dict_place[dict_place_selection[selection]])
+
+
+def world_menu(place_name, place_type, place_id, place_level):
+    list_town_selection = [
+        "Manage character",
+        "Go to shop",
+        "Travel"
+    ]
+
+    list_dungeon_selection = [
+        "Hunt Boss Monster",
+        "Hunt Normal Monsters",
+        "Travel"
+    ]
+
+    is_correct_input = False
+    while not is_correct_input:
+        clear()
+        print(f"You are now in the {place_type} of {place_name}")
+
+        if place_type == "town":
+            for i, value in enumerate(list_town_selection):
+                print(i+1, value)
+            selection = int(input("> "))
+            if selection == 1:
+                is_correct_input = True
+            elif selection == 2:
+                is_correct_input = True
+            elif selection == 3:
+                is_correct_input = True
+                travel(place_name, place_id)
+
+        else:
+            for i, value in enumerate(list_dungeon_selection):
+                print(i+1, value)
+            selection = int(input("> "))
+            if selection == 1:
+                is_correct_input = True
+            elif selection == 2:
+                is_correct_input = True
+                enemy = Enemy(*spawn_monster(place_level, place_id))
+                enemy.show_stats()
+                enemy.update_stats()
+                enemy.show_stats()
+            elif selection == 3:
+                is_correct_input = True
+                travel(place_name, place_id)
+
+
+def spawn_monster(place_level, place_id):
+    dict_monster_race = {}
+    for i, key in enumerate(dict_race):
+        dict_monster_race[i+1] = key
+
+    dict_monster_job = {}
+    for i, key in enumerate(dict_job):
+        dict_monster_job[i+1] = key
+
+    list_monster_name = ["Alfred", "Eugene", "Vincent", "Dennis", "Jericho", "Jeremiah"]
+
+    monster_race = dict_race[dict_monster_race[random.randint(1, len(dict_monster_race))]]
+    monster_job = dict_job[dict_monster_job[random.randint(1, len(dict_monster_job))]]
+    monster_name = list_monster_name[random.randint(0, len(list_monster_name)-1)]
+    monster_level = random.randint(place_level-2, place_level+5)
+    if monster_level < 1:
+        monster_level = 1
+    if monster_level > 40:
+        monster_level = 40
+
+    monster_loot_id = random.randint(monster_level, monster_level+6)
+
+    return [monster_level, monster_name, *monster_race, *monster_job, monster_loot_id]
+
+
 if __name__ == '__main__':
     dict_race = {
+        # Name, Str, Dex, Con, Int, Luk
         "Human": ["Human", 125, 3, 8, 6, 5],
         "Elf": ["Elf", 100, 4, 12, 5, 3],
         "Orc": ["Orc", 200, 2, 6, 9, 7],
@@ -235,6 +389,7 @@ if __name__ == '__main__':
     }
 
     dict_job = {
+        # Name, Str, Dex, Con, Int, Luk
         "Warrior": ["Warrior", 20, 14, 12, 8, 12],
         "Knight": ["Knight", 16, 7, 20, 10, 13],
         "Mage": ["Mage", 9, 12, 8, 26, 11],
@@ -242,8 +397,40 @@ if __name__ == '__main__':
         "Priest": ["Priest", 11, 13, 16, 14, 12]
     }
 
+    dict_place = {
+        # Name, Type, ID, Level
+        "Cainta": ["Cainta", "town", 1, 1],
+        "Cainta Prairie": ["Cainta Prairie", "dungeon", 2, 1],
+        "Taytay": ["Taytay", "town", 3, 11],
+        "Taytay Caverns": ["Taytay Caverns", "dungeon", 4, 11],
+        "Antipolo": ["Antipolo", "town", 5, 21],
+        "Antipolo Peaks": ["Antipolo Peaks", "dungeon", 6, 21],
+        "Angono": ["Angono", "town", 7, 31],
+        "Angono Sanctuary": ["Angono Sanctuary", "dungeon", 8, 31],
+        "Binangonan": ["Binangonan", "town", 9, 40],
+        "Binangonan Ruins": ["Binangonan Ruins", "dungeon", 10, 40]
+    }
+
+    dict_item_id = {
+        # HP, AP, Spd, Atk, Def, ID, Name
+        0: [0, 0, 0, 0, 0, 0, "Empty"],
+        1: [0, 1, 4, 25, 0, 1, "Rusty Axe"],
+        2: [0, 0, 2, 40, 15, 2, "Chipped Sword"],
+        3: [0, 2, 6, 15, 10, 3, "Crude Bow"],
+        4: [0, 0, 2, 75, 0, 4, "Mundane Staff"],
+        5: [0, 1, 3, 35, 5, 5, "Broken Rod"],
+        6: [150, 0, 2, 0, 20, 6, "Torn Fur Armor"],
+        7: [250, 0, 0, 0, 35, 7, "Tarnished Copper Armor"],
+        8: [100, 1, 4, 0, 15, 8, "Old Leather Armor"],
+        9: [50, 0, 3, 0, 12, 9, "Unremarkable Robe"],
+        10: [100, 0, 3, 0, 18, 10, "Unblessed Vestments"]
+    }
+
+    dict_item_id = defaultdict(lambda: [0, 0, 0, 0, 0, 0, "Empty"])
+
     main_menu()
     main_menu_input = int(input("> "))
+    clear()
 
     if main_menu_input == 1:
         opening_scene()
@@ -252,9 +439,9 @@ if __name__ == '__main__':
         player = Player(character_data[0], character_data[1], *dict_race[character_data[2]],
                         *dict_job[character_data[3]])
         player.show_stats()
+        world_menu(*dict_place["Cainta"])
 
     elif main_menu_input == 2:
         pass
     else:
         pass
-
