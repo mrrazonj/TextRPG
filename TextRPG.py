@@ -293,8 +293,8 @@ def character_creation():
 def spawn_monster(place_level):
     list_monster_name = ["Alfred", "Eugene", "Vincent", "Dennis", "Jericho", "Jeremiah"]
 
-    monster_race = random.choice(list(dict_race))
-    monster_job = random.choice(list(dict_job))
+    monster_race = dict_race[random.choice(list(dict_race))]
+    monster_job = dict_job[random.choice(list(dict_job))]
     monster_name = random.choice(list(list_monster_name))
     monster_level = random.randint(place_level-2, place_level+5)
     if monster_level < 1:
