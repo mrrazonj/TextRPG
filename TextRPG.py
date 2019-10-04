@@ -1,6 +1,8 @@
+import sys
 from os import system, name
 from collections import defaultdict
 import random
+from datetime import datetime
 
 
 def clear():
@@ -85,22 +87,21 @@ class Entity:
 
 class Enemy(Entity):
     def __init__(self, level, desc_name, desc_race, base_hp, base_ap, base_spd, base_atk, base_def,
-                 desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk, loot):
+                 desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk, loot, has_rare):
         super().__init__(level, desc_name, desc_race, base_hp, base_ap, base_spd, base_atk, base_def,
                          desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk)
 
-        loot_dropped = loot
+        self.update_stats()
 
-    dict_job_level_modifiers = {
-        "Warrior": [4, 3, 1, 1, 1],
-        "Knight": [2, 1, 5, 1, 1],
-        "Ranger": [1, 5, 1, 1, 2],
-        "Mage": [1, 1, 1, 6, 1],
-        "Priest": [2, 2, 2, 2, 2]
-    }
+        self.has_rare = has_rare
+        if self.has_rare:
+            self.loot_dropped = dict_rare_item_id[loot]
+        else:
+            self.loot_dropped = dict_item_id[loot]
 
     def update_stats(self):
         dict_job_level_modifiers = {
+            # Str, Dex, Con, Int, Luk
             "Warrior": [4, 3, 1, 1, 1],
             "Knight": [2, 1, 5, 1, 1],
             "Ranger": [1, 5, 1, 1, 2],
@@ -119,6 +120,9 @@ class Enemy(Entity):
         self.stat_luk = list_attributes[4]
 
         self.init_stats()
+
+    def show_loot(self):
+        print(f"Monster is carrying {self.loot_dropped[-1]}!")
 
 
 class Player(Entity):
@@ -215,16 +219,24 @@ class Player(Entity):
 
 
 def main_menu():
-    print("▄▄▄█████▓▓█████  ██▀███   ███▄ ▄███▓ ██▓ ███▄    █  ▄▄▄       ██▓        ██▀███  ▓█████ ██▒   █▓▓█████  ██▀███   ██▓▓█████ ")
-    print("▓  ██▒ ▓▒▓█   ▀ ▓██ ▒ ██▒▓██▒▀█▀ ██▒▓██▒ ██ ▀█   █ ▒████▄    ▓██▒       ▓██ ▒ ██▒▓█   ▀▓██░   █▒▓█   ▀ ▓██ ▒ ██▒▓██▒▓█   ▀ ")
-    print("▒ ▓██░ ▒░▒███   ▓██ ░▄█ ▒▓██    ▓██░▒██▒▓██  ▀█ ██▒▒██  ▀█▄  ▒██░       ▓██ ░▄█ ▒▒███   ▓██  █▒░▒███   ▓██ ░▄█ ▒▒██▒▒███   ")
-    print("░ ▓██▓ ░ ▒▓█  ▄ ▒██▀▀█▄  ▒██    ▒██ ░██░▓██▒  ▐▌██▒░██▄▄▄▄██ ▒██░       ▒██▀▀█▄  ▒▓█  ▄  ▒██ █░░▒▓█  ▄ ▒██▀▀█▄  ░██░▒▓█  ▄ ")
-    print("  ▒██▒ ░ ░▒████▒░██▓ ▒██▒▒██▒   ░██▒░██░▒██░   ▓██░ ▓█   ▓██▒░██████▒   ░██▓ ▒██▒░▒████▒  ▒▀█░  ░▒████▒░██▓ ▒██▒░██░░▒████▒")
-    print("  ▒ ░░   ░░ ▒░ ░░ ▒▓ ░▒▓░░ ▒░   ░  ░░▓  ░ ▒░   ▒ ▒  ▒▒   ▓▒█░░ ▒░▓  ░   ░ ▒▓ ░▒▓░░░ ▒░ ░  ░ ▐░  ░░ ▒░ ░░ ▒▓ ░▒▓░░▓  ░░ ▒░ ░")
-    print("    ░     ░ ░  ░  ░▒ ░ ▒░░  ░      ░ ▒ ░░ ░░   ░ ▒░  ▒   ▒▒ ░░ ░ ▒  ░     ░▒ ░ ▒░ ░ ░  ░  ░ ░░   ░ ░  ░  ░▒ ░ ▒░ ▒ ░ ░ ░  ░")
-    print("  ░         ░     ░░   ░ ░      ░    ▒ ░   ░   ░ ░   ░   ▒     ░ ░        ░░   ░    ░       ░░     ░     ░░   ░  ▒ ░   ░   ")
-    print("            ░  ░   ░            ░    ░           ░       ░  ░    ░  ░      ░        ░  ░     ░     ░  ░   ░      ░     ░  ░")
-    print("                                                                                            ░                              ")
+    print("▄▄▄█████▓█████ ██▀███  ███▄ ▄███▓██▓███▄    █ ▄▄▄      ██▓    ")
+    print("▓  ██▒ ▓▓█   ▀▓██ ▒ ██▓██▒▀█▀ ██▓██▒██ ▀█   █▒████▄   ▓██▒    ")
+    print("▒ ▓██░ ▒▒███  ▓██ ░▄█ ▓██    ▓██▒██▓██  ▀█ ██▒██  ▀█▄ ▒██░    ")
+    print("░ ▓██▓ ░▒▓█  ▄▒██▀▀█▄ ▒██    ▒██░██▓██▒  ▐▌██░██▄▄▄▄██▒██░    ")
+    print("  ▒██▒ ░░▒████░██▓ ▒██▒██▒   ░██░██▒██░   ▓██░▓█   ▓██░██████▒")
+    print("  ▒ ░░  ░░ ▒░ ░ ▒▓ ░▒▓░ ▒░   ░  ░▓ ░ ▒░   ▒ ▒ ▒▒   ▓▒█░ ▒░▓  ░")
+    print("    ░    ░ ░  ░ ░▒ ░ ▒░  ░      ░▒ ░ ░░   ░ ▒░ ▒   ▒▒ ░ ░ ▒  ░")
+    print("  ░        ░    ░░   ░░      ░   ▒ ░  ░   ░ ░  ░   ▒    ░ ░   ")
+    print("    ██▀███ ▓███████▒   █▓█████ ██▀███  ██▓█████    ░  ░   ░  ░")
+    print("   ▓██ ▒ ██▓█   ▓██░   █▓█   ▀▓██ ▒ ██▓██▓█   ▀               ")
+    print("   ▓██ ░▄█ ▒███  ▓██  █▒▒███  ▓██ ░▄█ ▒██▒███                 ")
+    print("   ▒██▀▀█▄ ▒▓█  ▄ ▒██ █░▒▓█  ▄▒██▀▀█▄ ░██▒▓█  ▄               ")
+    print("   ░██▓ ▒██░▒████▒ ▒▀█░ ░▒████░██▓ ▒██░██░▒████▒              ")
+    print("   ░ ▒▓ ░▒▓░░ ▒░ ░ ░ ▐░ ░░ ▒░ ░ ▒▓ ░▒▓░▓ ░░ ▒░ ░              ")
+    print("     ░▒ ░ ▒░░ ░  ░ ░ ░░  ░ ░  ░ ░▒ ░ ▒░▒ ░░ ░  ░              ")
+    print("     ░░   ░   ░      ░░    ░    ░░   ░ ▒ ░  ░                 ")
+    print("      ░       ░  ░    ░    ░  ░  ░     ░    ░  ░              ")
+    print("                     ░                                        ")
     print("1. New Game\t\t2.Continue")
     print("3. Quit")
 
@@ -278,6 +290,32 @@ def character_creation():
     return [1, desc_name, *specs_list]
 
 
+def spawn_monster(place_level):
+    list_monster_name = ["Alfred", "Eugene", "Vincent", "Dennis", "Jericho", "Jeremiah"]
+
+    monster_race = dict_race[random.choice(list(dict_race))]
+    monster_job = dict_job[random.choice(list(dict_job))]
+    monster_name = random.choice(list(list_monster_name))
+    monster_level = random.randint(place_level-2, place_level+5)
+    if monster_level < 1:
+        monster_level = 1
+    if monster_level > 40:
+        monster_level = 40
+
+    loot_probability = random.random()
+    if loot_probability > 0.90:
+        monster_loot_id = random.randint(place_level, place_level+10)
+        has_rare = True
+    elif loot_probability >= 0.66:
+        monster_loot_id = random.randint(place_level, place_level+10)
+        has_rare = False
+    else:
+        monster_loot_id = 0
+        has_rare = False
+
+    return [monster_level, monster_name, *monster_race, *monster_job, monster_loot_id, has_rare]
+
+
 def travel(place_name, place_id):
     dict_place_selection = {}
     for i, key in enumerate(dict_place):
@@ -305,6 +343,38 @@ def travel(place_name, place_id):
             world_menu(*dict_place[dict_place_selection[selection]])
 
 
+def character_menu(place_name):
+    list_character_menu = [
+        "Manage Inventory",
+        "View Stats",
+        "View Skills",
+        "Save",
+        "Exit Menu",
+        "Quit"
+    ]
+
+    is_correct_input = False
+    while not is_correct_input:
+        clear()
+        print(f"What would you like to do, {player.desc_name}?")
+        for i, value in enumerate(list_character_menu):
+            print(i+1, value)
+        selection = int(input("> "))
+        if selection == 1:
+            is_correct_input = True
+        elif selection == 2:
+            is_correct_input = True
+        elif selection == 3:
+            is_correct_input = True
+        elif selection == 4:
+            is_correct_input = True
+        elif selection == 5:
+            is_correct_input = True
+            world_menu(*dict_place[place_name])
+        elif selection == 6:
+            sys.exit(0)
+
+
 def world_menu(place_name, place_type, place_id, place_level):
     list_town_selection = [
         "Manage character",
@@ -329,6 +399,7 @@ def world_menu(place_name, place_type, place_id, place_level):
             selection = int(input("> "))
             if selection == 1:
                 is_correct_input = True
+                character_menu(place_name)
             elif selection == 2:
                 is_correct_input = True
             elif selection == 3:
@@ -343,41 +414,16 @@ def world_menu(place_name, place_type, place_id, place_level):
                 is_correct_input = True
             elif selection == 2:
                 is_correct_input = True
-                enemy = Enemy(*spawn_monster(place_level, place_id))
-                enemy.show_stats()
-                enemy.update_stats()
+                enemy = Enemy(*spawn_monster(place_level))
                 enemy.show_stats()
             elif selection == 3:
                 is_correct_input = True
                 travel(place_name, place_id)
 
 
-def spawn_monster(place_level, place_id):
-    dict_monster_race = {}
-    for i, key in enumerate(dict_race):
-        dict_monster_race[i+1] = key
-
-    dict_monster_job = {}
-    for i, key in enumerate(dict_job):
-        dict_monster_job[i+1] = key
-
-    list_monster_name = ["Alfred", "Eugene", "Vincent", "Dennis", "Jericho", "Jeremiah"]
-
-    monster_race = dict_race[dict_monster_race[random.randint(1, len(dict_monster_race))]]
-    monster_job = dict_job[dict_monster_job[random.randint(1, len(dict_monster_job))]]
-    monster_name = list_monster_name[random.randint(0, len(list_monster_name)-1)]
-    monster_level = random.randint(place_level-2, place_level+5)
-    if monster_level < 1:
-        monster_level = 1
-    if monster_level > 40:
-        monster_level = 40
-
-    monster_loot_id = random.randint(monster_level, monster_level+6)
-
-    return [monster_level, monster_name, *monster_race, *monster_job, monster_loot_id]
-
-
 if __name__ == '__main__':
+    random.seed(datetime.now())
+
     dict_race = {
         # Name, Str, Dex, Con, Int, Luk
         "Human": ["Human", 125, 3, 8, 6, 5],
@@ -411,9 +457,10 @@ if __name__ == '__main__':
         "Binangonan Ruins": ["Binangonan Ruins", "dungeon", 10, 40]
     }
 
-    dict_item_id = {
+    dict_item_id = defaultdict(lambda: [0, 0, 0, 0, 0, 0, "none"])
+    dict_item_id.update({
         # HP, AP, Spd, Atk, Def, ID, Name
-        0: [0, 0, 0, 0, 0, 0, "Empty"],
+        0: [0, 0, 0, 0, 0, 0, "none"],
         1: [0, 1, 4, 25, 0, 1, "Rusty Axe"],
         2: [0, 0, 2, 40, 15, 2, "Chipped Sword"],
         3: [0, 2, 6, 15, 10, 3, "Crude Bow"],
@@ -424,9 +471,23 @@ if __name__ == '__main__':
         8: [100, 1, 4, 0, 15, 8, "Old Leather Armor"],
         9: [50, 0, 3, 0, 12, 9, "Unremarkable Robe"],
         10: [100, 0, 3, 0, 18, 10, "Unblessed Vestments"]
-    }
+    })
 
-    dict_item_id = defaultdict(lambda: [0, 0, 0, 0, 0, 0, "Empty"])
+    dict_rare_item_id = defaultdict(lambda: [0, 0, 0, 0, 0, 0, "none"])
+    dict_item_id.update({
+        # HP, AP, Spd, Atk, Def, ID, Name
+        0: [0, 0, 0, 0, 0, 0, "none"],
+        1: [0, 1, 6, 40, 10, 11, "Executioner's Axe"],
+        2: [200, 0, 2, 40, 18, 12, "Inquisitor's Sword"],
+        3: [0, 3, 12, 20, 12, 13, "Elven Bow"],
+        4: [0, 1, 6, 125, 9, 14, "Purification Staff"],
+        5: [120, 1, 5, 60, 15, 15, "Exorcism Rod"],
+        6: [250, 1, 4, 30, 35, 16, "Chieftain's Fur Armor"],
+        7: [600, 0, 0, 20, 60, 17, "Crusader's Copper Armor"],
+        8: [180, 2, 6, 10, 25, 18, "Elven Leather Armor"],
+        9: [80, 1, 5, 40, 15, 19, "Mystical Robe"],
+        10: [150, 1, 6, 20, 30, 20, "Priest's Vestments"]
+    })
 
     main_menu()
     main_menu_input = int(input("> "))
