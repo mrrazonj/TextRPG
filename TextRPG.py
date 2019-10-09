@@ -1,8 +1,9 @@
 import sys
 from os import system, name
-from collections import defaultdict
 import random
 from datetime import datetime
+
+import Worlddb
 
 
 def clear():
@@ -95,9 +96,9 @@ class Enemy(Entity):
 
         self.has_rare = has_rare
         if self.has_rare:
-            self.loot_dropped = dict_rare_item_id[loot]
+            self.loot_dropped = Worlddb.dict_rare_item_id[loot]
         else:
-            self.loot_dropped = dict_item_id[loot]
+            self.loot_dropped = Worlddb.dict_item_id[loot]
 
     def update_stats(self):
         dict_job_level_modifiers = {
@@ -247,11 +248,11 @@ def opening_scene():
 
 def character_creation():
     dict_race_selection = {}
-    for i, key in enumerate(dict_race):
+    for i, key in enumerate(Worlddb.dict_race):
         dict_race_selection[i + 1] = key
 
     dict_job_selection = {}
-    for i, key in enumerate(dict_job):
+    for i, key in enumerate(Worlddb.dict_job):
         dict_job_selection[i + 1] = key
 
     is_name_final = False
@@ -477,8 +478,8 @@ def battle_encounter(enemy):
 def spawn_monster(place_level):
     list_monster_name = ["Alfred", "Eugene", "Vincent", "Dennis", "Jericho", "Jeremiah"]
 
-    monster_race = dict_race[random.choice(list(dict_race))]
-    monster_job = dict_job[random.choice(list(dict_job))]
+    monster_race = Worlddb.dict_race[random.choice(list(Worlddb.dict_race))]
+    monster_job = Worlddb.dict_job[random.choice(list(Worlddb.dict_job))]
     monster_name = random.choice(list(list_monster_name))
     monster_level = random.randint(place_level - 2, place_level + 5)
     if monster_level < 1:
@@ -502,7 +503,7 @@ def spawn_monster(place_level):
 
 def travel(place_name, place_id):
     dict_place_selection = {}
-    for i, key in enumerate(dict_place):
+    for i, key in enumerate(Worlddb.dict_place):
         dict_place_selection[i + 1] = key
 
     is_correct_input = False
@@ -513,7 +514,7 @@ def travel(place_name, place_id):
                 print("1 Cainta")
                 print("2 Cainta Prairie")
                 break
-            elif place_id + 1 > len(dict_place):
+            elif place_id + 1 > len(Worlddb.dict_place):
                 print("9 Binangonan")
                 print("10 Binangonan Ruins")
                 break
@@ -524,7 +525,7 @@ def travel(place_name, place_id):
             print("You have entered an invalid number, please try again.")
         else:
             is_correct_input = True
-            world_menu(*dict_place[dict_place_selection[selection]])
+            world_menu(*Worlddb.dict_place[dict_place_selection[selection]])
 
 
 def character_menu(place_name):
@@ -554,7 +555,7 @@ def character_menu(place_name):
             is_correct_input = True
         elif selection == 5:
             is_correct_input = True
-            world_menu(*dict_place[place_name])
+            world_menu(*Worlddb.dict_place[place_name])
         elif selection == 6:
             sys.exit(0)
 
@@ -609,71 +610,6 @@ def world_menu(place_name, place_type, place_id, place_level):
 if __name__ == '__main__':
     random.seed(datetime.now())
 
-    dict_race = {
-        # Name, Str, Dex, Con, Int, Luk
-        "Human": ["Human", 125, 3, 8, 6, 5],
-        "Elf": ["Elf", 100, 4, 12, 5, 3],
-        "Orc": ["Orc", 200, 2, 6, 9, 7],
-        "Troll": ["Troll", 250, 1, 2, 15, 10],
-        "Dwarf": ["Dwarf", 150, 3, 7, 8, 8],
-        "Kobold": ["Kobold", 70, 3, 9, 4, 2]
-    }
-
-    dict_job = {
-        # Name, Str, Dex, Con, Int, Luk
-        "Warrior": ["Warrior", 20, 14, 12, 8, 12],
-        "Knight": ["Knight", 16, 7, 20, 10, 13],
-        "Mage": ["Mage", 9, 12, 8, 26, 11],
-        "Ranger": ["Ranger", 11, 18, 10, 12, 15],
-        "Priest": ["Priest", 11, 13, 16, 14, 12]
-    }
-
-    dict_place = {
-        # Name, Type, ID, Level
-        "Cainta": ["Cainta", "town", 1, 1],
-        "Cainta Prairie": ["Cainta Prairie", "dungeon", 2, 1],
-        "Taytay": ["Taytay", "town", 3, 11],
-        "Taytay Caverns": ["Taytay Caverns", "dungeon", 4, 11],
-        "Antipolo": ["Antipolo", "town", 5, 21],
-        "Antipolo Peaks": ["Antipolo Peaks", "dungeon", 6, 21],
-        "Angono": ["Angono", "town", 7, 31],
-        "Angono Sanctuary": ["Angono Sanctuary", "dungeon", 8, 31],
-        "Binangonan": ["Binangonan", "town", 9, 40],
-        "Binangonan Ruins": ["Binangonan Ruins", "dungeon", 10, 40]
-    }
-
-    dict_item_id = defaultdict(lambda: [0, 0, 0, 0, 0, 0, "none"])
-    dict_item_id.update({
-        # HP, AP, Spd, Atk, Def, ID, Name
-        0: [0, 0, 0, 0, 0, 0, "none"],
-        1: [0, 1, 4, 25, 0, 1, "Rusty Axe"],
-        2: [0, 0, 2, 40, 15, 2, "Chipped Sword"],
-        3: [0, 2, 6, 15, 10, 3, "Crude Bow"],
-        4: [0, 0, 2, 75, 0, 4, "Mundane Staff"],
-        5: [0, 1, 3, 35, 5, 5, "Broken Rod"],
-        6: [150, 0, 2, 0, 20, 6, "Torn Fur Armor"],
-        7: [250, 0, 0, 0, 35, 7, "Tarnished Copper Armor"],
-        8: [100, 1, 4, 0, 15, 8, "Old Leather Armor"],
-        9: [50, 0, 3, 0, 12, 9, "Unremarkable Robe"],
-        10: [100, 0, 3, 0, 18, 10, "Unblessed Vestments"]
-    })
-
-    dict_rare_item_id = defaultdict(lambda: [0, 0, 0, 0, 0, 0, "none"])
-    dict_item_id.update({
-        # HP, AP, Spd, Atk, Def, ID, Name
-        0: [0, 0, 0, 0, 0, 0, "none"],
-        1: [0, 1, 6, 40, 10, 11, "Executioner's Axe"],
-        2: [200, 0, 2, 40, 18, 12, "Inquisitor's Sword"],
-        3: [0, 3, 12, 20, 12, 13, "Elven Bow"],
-        4: [0, 1, 6, 125, 9, 14, "Purification Staff"],
-        5: [120, 1, 5, 60, 15, 15, "Exorcism Rod"],
-        6: [250, 1, 4, 30, 35, 16, "Chieftain's Fur Armor"],
-        7: [600, 0, 0, 20, 60, 17, "Crusader's Copper Armor"],
-        8: [180, 2, 6, 10, 25, 18, "Elven Leather Armor"],
-        9: [80, 1, 5, 40, 15, 19, "Mystical Robe"],
-        10: [150, 1, 6, 20, 30, 20, "Priest's Vestments"]
-    })
-
     main_menu()
     main_menu_input = int(input("> "))
     clear()
@@ -682,10 +618,10 @@ if __name__ == '__main__':
         opening_scene()
 
         character_data = character_creation()
-        player = Player(character_data[0], character_data[1], *dict_race[character_data[2]],
-                        *dict_job[character_data[3]])
+        player = Player(character_data[0], character_data[1], *Worlddb.dict_race[character_data[2]],
+                        *Worlddb.dict_job[character_data[3]])
         player.show_stats()
-        world_menu(*dict_place["Cainta"])
+        world_menu(*Worlddb.dict_place["Cainta"])
 
     elif main_menu_input == 2:
         pass
