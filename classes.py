@@ -1,6 +1,7 @@
 import menus
 import world_db
 
+
 class Entity:
     def __init__(self, level, desc_name, desc_race, base_hp, base_ap, base_spd, base_atk, base_def,
                  desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk):
@@ -115,7 +116,8 @@ class Player(Entity):
 
         self.experience = 0
         self.inventory = []
-        self.skill = []
+        self.equipped_skills = []
+        self.learned_skills = []
 
         self.unallocated_stat = 0
         self.unallocated_skill = 0
