@@ -73,5 +73,7 @@ list_common_skills = [
 list_warrior_skills = [
     "Bash",
     "Rush",
-    ""
+    "Execute",
+    "Reckless Onslaught",
+    "Chaotic Drive"
 ]
