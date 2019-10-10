@@ -290,189 +290,124 @@ def character_creation():
     return [1, desc_name, *specs_list]
 
 
-def battle_encounter(enemy):
+def player_turn(player_hp, enemy_hp, player_ap, is_in_battle):
+    # Turn initialization
     list_combat_selection = ["Technique", "Magic", "Check loot", "Items", "Flee"]
+    player_ap += player.combat_ap
+
+    clear()
+    print(f"{player.desc_name}'s turn!")
+    pause()
+
+    while enemy_hp > 0 and player_hp > 0 and player_ap > 0 and is_in_battle:
+        clear()
+        print(f"{player.desc_name}'s HP: {player_hp}\t\t", f"{enemy.desc_name}'s HP: {enemy_hp}")
+        print(f"Remaining AP: {player_ap}")
+        print("What would you like to do?")
+        for i, command in enumerate(list_combat_selection):
+            print(i + 1, command)
+        selection = int(input("> "))
+        if selection == 1:
+            pass
+        elif selection == 2:
+            pass
+        elif selection == 3:
+            enemy.show_loot()
+        elif selection == 4:
+            pass
+        elif selection == 5:
+            flee_probability = random.random()
+            if flee_probability >= 0.33:
+                print(f"{player.desc_name} has successfully escaped the battle!")
+                is_in_battle = False
+            else:
+                print(f"{player.desc_name} failed to escape!")
+                player_ap = 0
+
+    return player_hp, enemy_hp, is_in_battle
+
+
+def enemy_turn(player_hp, enemy_hp, enemy_ap, enemy_heal_charges, is_enemy_spec_used):
+    # Turn initialization
+    enemy_ap += enemy.combat_ap
+    # Turn flags
+    has_enemy_healed = False
+
+    clear()
+    print("Enemy's Turn!")
+    pause()
+
+    while enemy_hp > 0 and player_hp > 0 and enemy_ap > 0:
+        clear()
+        if enemy_hp > enemy.combat_hp * 0.80:
+            player_hp -= int((enemy.combat_atk * 0.50) - player.combat_def)
+            enemy_ap -= 2
+            print(f"Enemy attacked {player.desc_name} for {int((enemy.combat_atk * 0.50) - player.combat_def)}"
+                  " damage!")
+            pause()
+        elif enemy_hp > enemy.combat_hp * 0.50:
+            player_hp -= int((enemy.combat_atk * 0.80) - player.combat_def)
+            enemy_ap -= 3
+            print(f"Enemy viciously attacked {player.desc_name} for "
+                  f"{int((enemy.combat_atk * 0.80) - player.combat_def)} damage!")
+            pause()
+        elif enemy_hp > enemy.combat_hp * 0.25:
+            if enemy_heal_charges > 0 and not has_enemy_healed:
+                enemy_hp += int(enemy.combat_hp * 0.15)
+                enemy_heal_charges -= 1
+                enemy_ap -= 2
+                has_enemy_healed = True
+                print(f"Enemy used a potion to heal for {int(enemy.combat_hp * 0.15)} damage!")
+                pause()
+            else:
+                player_hp -= enemy.combat_atk - player.combat_def
+                enemy_ap -= 3
+                print(f"Enemy furiously attacked {player.desc_name} "
+                      f"for {enemy.combat_atk - player.combat_def} damage!")
+                pause()
+        elif enemy_hp > enemy.combat_hp * 0.10:
+            if not is_enemy_spec_used:
+                player_hp -= enemy.combat_atk * 2.0
+                enemy_hp += enemy.combat_atk
+                enemy_ap -= 4
+                is_enemy_spec_used = True
+                print(f"Enemy dealt {enemy.combat_atk * 2.0} absolute damage,"
+                      f" while healing for half the amount!")
+                pause()
+            else:
+                player_hp -= enemy.combat_atk
+                enemy_ap -= 3
+                print(f"Enemy desperately attacked {player.desc_name} for {enemy.combat_atk} absolute damage!")
+                pause()
+
+    return player_hp, enemy_hp, enemy_heal_charges, is_enemy_spec_used
+
+
+def battle_menu():
     # ==========Initialize Stats===========
     player_hp = player.combat_hp
     enemy_hp = enemy.combat_hp
-    player_ap = player.combat_ap
-    enemy_ap = enemy.combat_ap
+    player_ap = 0
+    enemy_ap = 0
     # ===========Battle Flags==============
-    in_battle = True
-    first_turn_player = True
-    first_turn_enemy = True
+    is_in_battle = True
     enemy_heal_charges = 2
     is_enemy_spec_used = False
 
     if player.combat_spd > enemy.combat_spd:
-        while enemy_hp > 0 and player_hp > 0 and in_battle:
+        while enemy_hp > 0 and player_hp > 0 and is_in_battle:
+            turn_computations = player_turn(player_hp, enemy_hp, player_ap, is_in_battle)
+            player_hp, enemy_hp, is_in_battle = turn_computations
             clear()
-            print(f"{player.desc_name}'s turn!")
-            pause()
-            while enemy_hp > 0 and player_hp > 0 and player_ap > 0 and in_battle:
-                if first_turn_player:
-                    first_turn_player = False
-                else:
-                    player_ap += player.combat_ap
-                clear()
-                print(f"{player.desc_name}'s HP: {player_hp}\t\t", f"{enemy.desc_name}'s HP: {enemy_hp}")
-                print(f"Remaining AP: {player_ap}")
-                print("What would you like to do?")
-                for i, command in enumerate(list_combat_selection):
-                    print(i + 1, command)
-                selection = int(input("> "))
-                if selection == 1:
-                    pass
-                elif selection == 2:
-                    pass
-                elif selection == 3:
-                    enemy.show_loot()
-                elif selection == 4:
-                    pass
-                elif selection == 5:
-                    flee_probability = random.random()
-                    if flee_probability >= 0.33:
-                        print(f"{player.desc_name} has successfully escaped the battle!")
-                        in_battle = False
-                    else:
-                        print(f"{player.desc_name} failed to escape!")
-                        player_ap = 0
-
-            clear()
-            print("Enemy's Turn!")
-            has_enemy_healed = False
-            pause()
-            while enemy_hp > 0 and player_hp > 0 and enemy_ap > 0:
-                if first_turn_enemy:
-                    first_turn_enemy = False
-                else:
-                    enemy_ap += enemy.combat_ap
-
-                clear()
-                if enemy_hp > enemy.combat_hp * 0.80:
-                    player_hp -= (enemy.combat_atk * 0.50) - player.combat_def
-                    enemy_ap -= 2
-                    print(f"Enemy attacked {player.desc_name} for {(enemy.combat_atk * 0.50) - player.combat_def}"
-                          " damage!")
-                    pause()
-                elif enemy_hp > enemy.combat_hp * 0.50:
-                    player_hp -= (enemy.combat_atk * 0.80) - player.combat_def
-                    enemy_ap -= 3
-                    print(f"Enemy viciously attacked {player.desc_name} for "
-                          f"{(enemy.combat_atk * 0.80) - player.combat_def} damage!")
-                    pause()
-                elif enemy_hp > enemy.combat_hp * 0.25:
-                    if enemy_heal_charges > 0 and not has_enemy_healed:
-                        enemy_hp += enemy.combat_hp * 0.15
-                        enemy_heal_charges -= 1
-                        enemy_ap -= 2
-                        has_enemy_healed = True
-                        print(f"Enemy used a potion to heal for {enemy.combat_hp * 0.15} damage!")
-                        pause()
-                    else:
-                        player_hp -= enemy.combat_atk - player.combat_def
-                        enemy_ap -= 3
-                        print(f"Enemy furiously attacked {player.desc_name} "
-                              f"for {enemy.combat_atk - player.combat_def} damage!")
-                        pause()
-                elif enemy_hp > enemy.combat_hp * 0.10:
-                    if not is_enemy_spec_used:
-                        player_hp -= enemy.combat_atk * 2.0
-                        enemy_hp += enemy.combat_atk * 1.0
-                        enemy_ap -= 4
-                        is_enemy_spec_used = True
-                        print(f"Enemy dealt {enemy.combat_atk * 2.0} absolute damage,"
-                              f" while healing for half the amount!")
-                        pause()
-                    else:
-                        player_hp -= enemy.combat_atk
-                        enemy_ap -= 3
-                        print(f"Enemy desperately attacked {player.desc_name} for {enemy.combat_atk} absolute damage!")
-                        pause()
+            turn_computations = enemy_turn(player_hp, enemy_hp, enemy_ap, enemy_heal_charges, is_enemy_spec_used)
+            player_hp, enemy_hp, enemy_heal_charges, is_enemy_spec_used = turn_computations
     else:
-        while enemy_hp > 0 and player_hp > 0 and in_battle:
+        while enemy_hp > 0 and player_hp > 0 and is_in_battle:
+            turn_computations = enemy_turn(player_hp, enemy_hp, enemy_ap, enemy_heal_charges, is_enemy_spec_used)
+            player_hp, enemy_hp, enemy_heal_charges, is_enemy_spec_used = turn_computations
             clear()
-            print("Enemy's Turn!")
-            has_enemy_healed = False
-            pause()
-            while enemy_hp > 0 and player_hp > 0 and enemy_ap > 0:
-                if first_turn_enemy:
-                    first_turn_enemy = False
-                else:
-                    enemy_ap += enemy.combat_ap
-                clear()
-                if enemy_hp > enemy.combat_hp * 0.80:
-                    player_hp -= (enemy.combat_atk * 0.50) - player.combat_def
-                    enemy_ap -= 2
-                    print(f"Enemy attacked {player.desc_name} for {(enemy.combat_atk * 0.50) - player.combat_def}"
-                          " damage!")
-                    pause()
-                elif enemy_hp > enemy.combat_hp * 0.50:
-                    player_hp -= (enemy.combat_atk * 0.80) - player.combat_def
-                    enemy_ap -= 3
-                    print(f"Enemy viciously attacked {player.desc_name} for "
-                          f"{(enemy.combat_atk * 0.80) - player.combat_def} damage!")
-                    pause()
-                elif enemy_hp > enemy.combat_hp * 0.25:
-                    if enemy_heal_charges > 0 and not has_enemy_healed:
-                        enemy_hp += enemy.combat_hp * 0.15
-                        enemy_heal_charges -= 1
-                        enemy_ap -= 2
-                        has_enemy_healed = True
-                        print(f"Enemy used a potion to heal for {enemy.combat_hp * 0.15} damage!")
-                        pause()
-                    else:
-                        player_hp -= enemy.combat_atk - player.combat_def
-                        enemy_ap -= 3
-                        print(f"Enemy furiously attacked {player.desc_name} "
-                              f"for {enemy.combat_atk - player.combat_def} damage!")
-                        pause()
-                elif enemy_hp > enemy.combat_hp * 0.10:
-                    if not is_enemy_spec_used:
-                        player_hp -= enemy.combat_atk * 2.0
-                        enemy_hp += enemy.combat_atk * 1.0
-                        enemy_ap -= 4
-                        is_enemy_spec_used = True
-                        print(f"Enemy dealt {enemy.combat_atk * 2.0} absolute damage,"
-                              f" while healing for half the amount!")
-                        pause()
-                    else:
-                        player_hp -= enemy.combat_atk
-                        enemy_ap -= 3
-                        print(f"Enemy desperately attacked {player.desc_name} for {enemy.combat_atk} absolute damage!")
-                        pause()
-
-            clear()
-            print(f"{player.desc_name}'s turn!")
-            pause()
-            while enemy_hp > 0 and player_hp > 0 and player_ap > 0 and in_battle:
-                if first_turn_player:
-                    first_turn_player = False
-                else:
-                    player_ap += player.combat_ap
-                clear()
-                print(f"{player.desc_name}'s HP: {player_hp}\t\t", f"{enemy.desc_name}'s HP: {enemy_hp}")
-                print(f"Remaining AP: {player_ap}")
-                print("What would you like to do?")
-                for i, command in enumerate(list_combat_selection):
-                    print(i + 1, command)
-                selection = int(input("> "))
-                if selection == 1:
-                    pass
-                elif selection == 2:
-                    pass
-                elif selection == 3:
-                    enemy.show_loot()
-                elif selection == 4:
-                    pass
-                elif selection == 5:
-                    flee_probability = random.random()
-                    if flee_probability >= 0.33:
-                        print(f"{player.desc_name} has successfully escaped the battle!")
-                        in_battle = False
-                    else:
-                        print(f"{player.desc_name} failed to escape!")
-                        player_ap = 0
+            turn_computations = player_turn(player_hp, enemy_hp, player_ap, is_in_battle)
+            player_hp, enemy_hp, is_in_battle = turn_computations
 
 
 def spawn_monster(place_level):
@@ -508,6 +443,7 @@ def travel(place_name, place_id):
 
     is_correct_input = False
     while not is_correct_input:
+        clear()
         print(f"You are currently in {place_name}, Where would you like to go?")
         for i in range(place_id - 1, place_id + 2):
             if place_id - 1 < 1:
@@ -523,12 +459,14 @@ def travel(place_name, place_id):
         selection = int(input("> "))
         if selection > place_id + 1 or selection < place_id - 1:
             print("You have entered an invalid number, please try again.")
+            pause()
         else:
+            selected = dict_place_selection[selection]
             is_correct_input = True
-            world_menu(*Worlddb.dict_place[dict_place_selection[selection]])
+            return selected
 
 
-def character_menu(place_name):
+def character_menu():
     list_character_menu = [
         "Manage Inventory",
         "View Stats",
@@ -555,56 +493,8 @@ def character_menu(place_name):
             is_correct_input = True
         elif selection == 5:
             is_correct_input = True
-            world_menu(*Worlddb.dict_place[place_name])
         elif selection == 6:
             sys.exit(0)
-
-
-def world_menu(place_name, place_type, place_id, place_level):
-    list_town_selection = [
-        "Manage character",
-        "Go to shop",
-        "Travel"
-    ]
-
-    list_dungeon_selection = [
-        "Hunt Boss Monster",
-        "Hunt Normal Monsters",
-        "Travel"
-    ]
-
-    is_correct_input = False
-    while not is_correct_input:
-        clear()
-        print(f"You are now in the {place_type} of {place_name}")
-
-        if place_type == "town":
-            for i, value in enumerate(list_town_selection):
-                print(i + 1, value)
-            selection = int(input("> "))
-            if selection == 1:
-                is_correct_input = True
-                character_menu(place_name)
-            elif selection == 2:
-                is_correct_input = True
-            elif selection == 3:
-                is_correct_input = True
-                travel(place_name, place_id)
-
-        else:
-            for i, value in enumerate(list_dungeon_selection):
-                print(i + 1, value)
-            selection = int(input("> "))
-            if selection == 1:
-                is_correct_input = True
-            elif selection == 2:
-                is_correct_input = True
-                enemy = Enemy(*spawn_monster(place_level))
-                enemy.show_stats()
-                battle_encounter(enemy)
-            elif selection == 3:
-                is_correct_input = True
-                travel(place_name, place_id)
 
 
 if __name__ == '__main__':
@@ -621,7 +511,52 @@ if __name__ == '__main__':
         player = Player(character_data[0], character_data[1], *Worlddb.dict_race[character_data[2]],
                         *Worlddb.dict_job[character_data[3]])
         player.show_stats()
-        world_menu(*Worlddb.dict_place["Cainta"])
+
+        list_town_selection = [
+            "Manage character",
+            "Go to shop",
+            "Travel"
+        ]
+        list_dungeon_selection = [
+            "Hunt Boss Monster",
+            "Hunt Normal Monsters",
+            "Travel"
+        ]
+
+        player_location = Worlddb.dict_place["Cainta"]
+        while True:
+            is_correct_world_input = False
+            while not is_correct_world_input:
+                clear()
+                print(f"You are now in the {player_location[1]} of {player_location[0]}")
+
+                if player_location[1] == "town":
+                    for world_key, world_value in enumerate(list_town_selection):
+                        print(world_key + 1, world_value)
+                    world_selection = int(input("> "))
+                    if world_selection == 1:
+                        is_correct_world_input = True
+                        character_menu()
+                    elif world_selection == 2:
+                        is_correct_world_input = True
+                    elif world_selection == 3:
+                        player_location = Worlddb.dict_place[travel(player_location[0], player_location[2])]
+                        is_correct_world_input = True
+
+                else:
+                    for world_key, world_value in enumerate(list_dungeon_selection):
+                        print(world_key + 1, world_value)
+                    world_selection = int(input("> "))
+                    if world_selection == 1:
+                        is_correct_world_input = True
+                    elif world_selection == 2:
+                        is_correct_world_input = True
+                        enemy = Enemy(*spawn_monster(player_location[3]))
+                        enemy.show_stats()
+                        battle_menu()
+                    elif world_selection == 3:
+                        player_location = Worlddb.dict_place[travel(player_location[0], player_location[2])]
+                        is_correct_world_input = True
 
     elif main_menu_input == 2:
         pass
