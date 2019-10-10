@@ -340,16 +340,22 @@ def enemy_turn(player_hp, enemy_hp, enemy_ap, enemy_heal_charges, is_enemy_spec_
     while enemy_hp > 0 and player_hp > 0 and enemy_ap > 0:
         clear()
         if enemy_hp > enemy.combat_hp * 0.80:
-            player_hp -= int((enemy.combat_atk * 0.50) - player.combat_def)
+            if int((enemy.combat_atk * 0.50) - player.combat_def) > 0:
+                player_hp -= int((enemy.combat_atk * 0.50) - player.combat_def)
+                print(f"Enemy attacked {player.desc_name} for {int((enemy.combat_atk * 0.50) - player.combat_def)}"
+                      " damage!")
+            else:
+                print("Enemy did no damage!")
             enemy_ap -= 2
-            print(f"Enemy attacked {player.desc_name} for {int((enemy.combat_atk * 0.50) - player.combat_def)}"
-                  " damage!")
             pause()
         elif enemy_hp > enemy.combat_hp * 0.50:
-            player_hp -= int((enemy.combat_atk * 0.80) - player.combat_def)
+            if int((enemy.combat_atk * 0.80) - player.combat_def) > 0:
+                player_hp -= int((enemy.combat_atk * 0.80) - player.combat_def)
+                print(f"Enemy viciously attacked {player.desc_name} for "
+                      f"{int((enemy.combat_atk * 0.80) - player.combat_def)} damage!")
+            else:
+                print("Enemy did no damage!")
             enemy_ap -= 3
-            print(f"Enemy viciously attacked {player.desc_name} for "
-                  f"{int((enemy.combat_atk * 0.80) - player.combat_def)} damage!")
             pause()
         elif enemy_hp > enemy.combat_hp * 0.25:
             if enemy_heal_charges > 0 and not has_enemy_healed:
@@ -360,10 +366,13 @@ def enemy_turn(player_hp, enemy_hp, enemy_ap, enemy_heal_charges, is_enemy_spec_
                 print(f"Enemy used a potion to heal for {int(enemy.combat_hp * 0.15)} damage!")
                 pause()
             else:
-                player_hp -= enemy.combat_atk - player.combat_def
+                if enemy.combat_atk - player.combat_def > 0:
+                    player_hp -= enemy.combat_atk - player.combat_def
+                    print(f"Enemy furiously attacked {player.desc_name} "
+                          f"for {enemy.combat_atk - player.combat_def} damage!")
+                else:
+                    print("Enemy did no damage!")
                 enemy_ap -= 3
-                print(f"Enemy furiously attacked {player.desc_name} "
-                      f"for {enemy.combat_atk - player.combat_def} damage!")
                 pause()
         elif enemy_hp > enemy.combat_hp * 0.10:
             if not is_enemy_spec_used:
