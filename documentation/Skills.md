@@ -19,8 +19,6 @@ After using a `Finishing Move`, the next action will start over to be an `Openin
 A word of warning, if you end a turn with negative AP, you will incur penalties for the following turn 
 aside from the reduced AP allowance.
 
-***
-
 Legend
 ======
 #### Skill Name
@@ -29,8 +27,6 @@ Legend
 2. Follow-up Move
 3. Finishing Move
 ```
-
-***
 
 Techniques
 ======
@@ -69,6 +65,8 @@ Warrior Techniques
 1. Deals 120% attack damage, and 30% (half for bosses) of enemy missing HP as absolute damage, costs 3 AP, ends turn
 2. Deals 180% attack damage, and 50% (half for bosses) of enemy missing HP as absolute damage, costs 6 AP, ends turn
 3. Deals 240% attack damage, and 100% (half for bosses) of enemy missing HP as absolute damage, costs 10 AP, ends turn
+
+Note: Damage is dealt first before computing for missing health damage
 ```
 #### Reckless Onslaught Lv(31-40)
 ```
@@ -89,5 +87,5 @@ Note 2: Doesn't increase missing health damage from skills.
 3. Deals 700% absolute attack damage, 5% + [STR * 0.15 + DEX * 0.15] chance to instantly kill enemy,
    costs 6 AP and 80% of maximum health
    
-Note 1: Bosses can't be instantly killed, but they will instead be dealt an additional 400% damage,
-        and nullifying their AP income for 2 turns
+Note: Bosses can't be instantly killed, but they will instead be dealt an additional 400% damage,
+      and nullifying their AP income for 2 turns
