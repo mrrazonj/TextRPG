@@ -71,6 +71,7 @@ def character_menu(player):
         elif selection == 2:
             is_correct_input = True
         elif selection == 3:
+            skill_menu(player)
             is_correct_input = True
         elif selection == 4:
             is_correct_input = True
@@ -174,15 +175,18 @@ def player_turn(player, enemy, player_hp, enemy_hp, player_ap, is_in_battle):
             pass
         elif selection == 3:
             enemy.show_loot()
+            player_ap -= 1
         elif selection == 4:
             pass
         elif selection == 5:
             flee_probability = random.random()
             if flee_probability >= 0.33:
                 print(f"{player.desc_name} has successfully escaped the battle!")
+                pause()
                 is_in_battle = False
             else:
                 print(f"{player.desc_name} failed to escape!")
+                pause()
                 player_ap = 0
 
     return player_hp, enemy_hp, player_ap, is_in_battle
@@ -308,3 +312,92 @@ def spawn_monster(place_level):
         has_rare = False
 
     return [monster_level, monster_name, *monster_race, *monster_job, monster_loot_id, has_rare]
+
+
+def skill_menu(player):
+    list_menu_selection = [
+        "Learn Techniques",
+        "Equip Techniques",
+        "View Techniques"
+    ]
+
+    list_learnable_skills = world_db.dict_skills[player.desc_job]
+
+    clear()
+    print("What would you like to do?")
+    for i, value in enumerate(list_menu_selection):
+        print(i + 1, value)
+    selection = input("> ")
+
+    if selection == '1':
+        clear()
+        print("Which technique would you like to learn?")
+        print(f"Remaining skillpoints: {player.unallocated_skill}")
+        for i, key in enumerate(list_learnable_skills):
+            print(i + 1, key)
+        learn_selection = int(input("> "))
+        if 1 > learn_selection > len(list_learnable_skills):
+            clear()
+            print("Invalid selection!")
+            pause()
+        elif list_learnable_skills[learn_selection - 1] in player.learned_skills:
+            clear()
+            print("You already know this technique!")
+            pause()
+        elif player.unallocated_skill < 1:
+            clear()
+            print("You don't have enough skill points!")
+            pause()
+        else:
+            clear()
+            player.learned_skills.append(list_learnable_skills[learn_selection - 1])
+            player.unallocated_skill -= 1
+            print(f"You have successfully learned {list_learnable_skills[learn_selection - 1]}!")
+            pause()
+
+    elif selection == '2':
+        print("You have the following techniques currently equipped: ")
+        for i, value in enumerate(player.equipped_skills):
+            print(i + 1, value)
+        print("============================================================")
+        print("Which technique would you like to equip?")
+        for i, value in enumerate(player.learned_skills):
+            print(i + 1, value)
+        equip_selection = int(input("> "))
+        if player.learned_skills[equip_selection - 1] in player.equipped_skills:
+            clear()
+            print("You already have this technique equipped!")
+            pause()
+        else:
+            if len(player.equipped_skills) >= 5:
+                clear()
+                print("You can only equip a maximum of 5 techniques!")
+                print("Select a technique to unequip:")
+                for i, value in enumerate(player.equipped_skills):
+                    print(i + 1, value)
+                unequip_selection = int(input("> "))
+                if 1 > unequip_selection > len(player.equipped_skills):
+                    clear()
+                    print("Invalid selection!")
+                    pause()
+                else:
+                    clear()
+                    print(f"Successfully unequipped {player.equipped_skills[unequip_selection - 1]}")
+                    del player.equipped_skills[unequip_selection - 1]
+                    pause()
+
+            clear()
+            player.equipped_skills.append(player.learned_skills[equip_selection - 1])
+            print(f"Successfully equipped {player.learned_skills[equip_selection - 1]}")
+            pause()
+
+    elif selection == '3':
+        clear()
+        print("Equipped techniques:")
+        for i, value in enumerate(player.equipped_skills):
+            print(i + 1, value)
+        print("============================================================")
+        print("Learned techniques:")
+        for i in player.learned_skills:
+            print(i)
+        pause()

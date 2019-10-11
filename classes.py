@@ -105,7 +105,9 @@ class Enemy(Entity):
         self.init_stats()
 
     def show_loot(self):
+        menus.clear()
         print(f"Monster is carrying {self.loot_dropped[-1]}!")
+        menus.pause()
 
 
 class Player(Entity):
@@ -116,8 +118,8 @@ class Player(Entity):
 
         self.experience = 0
         self.inventory = []
-        self.equipped_skills = []
-        self.learned_skills = []
+        self.equipped_skills = ["Normal Attack", "Bide"]
+        self.learned_skills = ["Normal Attack", "Bide"]
 
         self.unallocated_stat = 0
         self.unallocated_skill = 0
