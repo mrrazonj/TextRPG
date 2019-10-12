@@ -181,10 +181,12 @@ def player_turn(player, enemy, player_hp, enemy_hp, player_ap, is_in_battle):
         elif selection == 5:
             flee_probability = random.random()
             if flee_probability >= 0.33:
+                clear()
                 print(f"{player.desc_name} has successfully escaped the battle!")
                 pause()
                 is_in_battle = False
             else:
+                clear()
                 print(f"{player.desc_name} failed to escape!")
                 pause()
                 player_ap = 0
@@ -334,25 +336,29 @@ def skill_menu(player):
         print("Which technique would you like to learn?")
         print(f"Remaining skillpoints: {player.unallocated_skill}")
         for i, key in enumerate(list_learnable_skills):
-            print(i + 1, key)
+            print(i + 1, key[0])
         learn_selection = int(input("> "))
         if 1 > learn_selection > len(list_learnable_skills):
             clear()
             print("Invalid selection!")
             pause()
-        elif list_learnable_skills[learn_selection - 1] in player.learned_skills:
+        elif list_learnable_skills[learn_selection - 1][0] in player.learned_skills:
             clear()
             print("You already know this technique!")
             pause()
-        elif player.unallocated_skill < 1:
+        elif list_learnable_skills[learn_selection - 1][1] > player.level:
+            clear()
+            print(f"You need to be level {list_learnable_skills[learn_selection - 1][1]} to learn this technique!")
+            pause()
+        elif player.unallocated_skill < list_learnable_skills[learn_selection - 1][2]:
             clear()
             print("You don't have enough skill points!")
             pause()
         else:
             clear()
-            player.learned_skills.append(list_learnable_skills[learn_selection - 1])
-            player.unallocated_skill -= 1
-            print(f"You have successfully learned {list_learnable_skills[learn_selection - 1]}!")
+            player.learned_skills.append(list_learnable_skills[learn_selection - 1][0])
+            player.unallocated_skill -= list_learnable_skills[learn_selection - 1][2]
+            print(f"You have successfully learned {list_learnable_skills[learn_selection - 1][0]}!")
             pause()
 
     elif selection == '2':
