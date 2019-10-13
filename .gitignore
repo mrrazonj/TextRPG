@@ -4,5 +4,6 @@ documentation/Thumbs.db
 __pycache__/
 build/
 dist/
+testing.py
 TextRPG.spec
 .gitignore

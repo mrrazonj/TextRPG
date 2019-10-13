@@ -65,19 +65,15 @@ dict_place = {
     "Binangonan Ruins": ["Binangonan Ruins", "dungeon", 10, 40]
 }
 
-dict_skills = {
-    "Warrior": ["Bash", "Rush", "Execute", "Reckless Onslaught", "Chaotic Drive"]
-}
-
 list_common_skills = [
     "Normal Attack",
     "Bide",
 ]
 
-list_warrior_skills = [
-    "Bash",
-    "Rush",
-    "Execute",
-    "Reckless Onslaught",
-    "Chaotic Drive"
-]
+dict_skills = {
+    "Warrior": [["Bash", 1, 1],
+                ["Rush", 11, 3],
+                ["Execute", 21, 5],
+                ["Reckless Onslaught", 31, 5],
+                ["Chaotic Drive", 40, 7]]
+}
