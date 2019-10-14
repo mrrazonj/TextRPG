@@ -338,6 +338,7 @@ def battle_menu(player, enemy):
         clear()
         player.experience += 30 * (enemy.level * 3)
         print(f"{30 * (enemy.level * 3)} experience gained!")
+        pause()
         if player.experience > player.experience_to_level_up:
             player.level_up()
 
@@ -414,13 +415,13 @@ def inventory_menu(player):
         elif player.has_weapon_equipped:
             clear()
             print(f"{player.desc_name} unequipped {player.equipped_weapon[0][-3]}")
-            player.unequip_weapon(player.equipped_weapon)
-            player.equip_weapon(player.inventory[0][selection - 1])
+            player.unequip_weapon(*player.equipped_weapon)
+            player.equip_weapon(*player.inventory[0][selection - 1])
             print(f"{player.desc_name} equipped {player.equipped_weapon[0][-3]}")
             pause()
         else:
             clear()
-            player.equip_weapon(player.inventory[0][selection - 1])
+            player.equip_weapon(*player.inventory[0][selection - 1])
             print(f"{player.desc_name} equipped {player.equipped_weapon[0][-3]}")
             pause()
 
@@ -437,13 +438,13 @@ def inventory_menu(player):
         elif player.has_armor_equipped:
             clear()
             print(f"{player.desc_name} unequipped {player.equipped_armor[0][-3]}")
-            player.unequip_weapon(player.equipped_weapon)
-            player.equip_weapon(player.inventory[1][selection - 1])
+            player.unequip_armor(*player.equipped_armor)
+            player.equip_armor(*player.inventory[1][selection - 1])
             print(f"{player.desc_name} equipped {player.equipped_armor[0][-3]}")
             pause()
         else:
             clear()
-            player.equip_weapon(player.inventory[1][selection - 1])
+            player.equip_armor(*player.inventory[1][selection - 1])
             print(f"{player.desc_name} equipped {player.equipped_armor[0][-3]}")
             pause()
 
