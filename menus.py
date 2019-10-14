@@ -68,7 +68,7 @@ def character_menu(player):
             print(i + 1, value)
         selection = int(input("> "))
         if selection == 1:
-
+            inventory_menu(player)
             is_correct_input = True
         elif selection == 2:
             # TODO manage attributes
