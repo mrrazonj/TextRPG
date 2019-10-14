@@ -53,7 +53,7 @@ def travel_menu(place_name, place_id):
 def character_menu(player):
     list_character_menu = [
         "Manage Inventory",
-        "Manage Stats",
+        "Manage Attributes",
         "Manage Skills",
         "Save",
         "Exit Menu",
@@ -68,16 +68,16 @@ def character_menu(player):
             print(i + 1, value)
         selection = int(input("> "))
         if selection == 1:
-            # TODO
+
             is_correct_input = True
         elif selection == 2:
-            # TODO
+            # TODO manage attributes
             is_correct_input = True
         elif selection == 3:
             skill_menu(player)
             is_correct_input = True
         elif selection == 4:
-            # TODO
+            # TODO memory dump save
             is_correct_input = True
         elif selection == 5:
             is_correct_input = True
@@ -191,13 +191,13 @@ def player_turn(player, enemy, player_hp, player_atk, player_def, player_ap, ene
                 break
 
         elif selection == 2:
-            # TODO
+            # TODO battle magic
             pass
         elif selection == 3:
             enemy.show_loot()
             player_ap -= 1
         elif selection == 4:
-            # TODO
+            # TODO battle consumables
             pass
         elif selection == 5:
             flee_probability = random.random()
@@ -333,6 +333,7 @@ def battle_menu(player, enemy):
         print("Game Over")
         pause()
         sys.exit(0)
+
     elif enemy_hp <= 0:
         clear()
         player.experience += 30 * (enemy.level * 3)
@@ -344,9 +345,9 @@ def battle_menu(player, enemy):
         print(f"{5 * (enemy.level * 1.5)} gold received!")
         pause()
 
-        if enemy.loot_dropped[-1] is not "none":
-            player.inventory.append(enemy.loot_dropped)
-            print(f"{enemy.loot_dropped[-1]} obtained!")
+        if enemy.loot_dropped[-3] != "none":
+            player.inventory[enemy.loot_dropped[-2]].append(enemy.loot_dropped)
+            print(f"{enemy.loot_dropped[-3]} obtained!")
             pause()
 
 
@@ -374,6 +375,77 @@ def spawn_monster(place_level):
         has_rare = False
 
     return [monster_level, monster_name, *monster_race, *monster_job, monster_loot_id, has_rare]
+
+
+def inventory_menu(player):
+    list_menu_selection = [
+        "View Inventory",
+        "Equip Weapon",
+        "Equip Armor"
+    ]
+
+    clear()
+    print("What would you like to do?")
+    for i, value in enumerate(list_menu_selection):
+        print(i + 1, value)
+    selection = input("> ")
+
+    if selection == '1':
+        clear()
+        print("Weapons: ")
+        for i, value in enumerate(player.inventory[0]):
+            print(i + 1, value[-3])
+        print("============================================================")
+        print("Armors: ")
+        for i, value in enumerate(player.inventory[1]):
+            print(i + 1, value[-3])
+        pause()
+
+    elif selection == '2':
+        clear()
+        print("What would you like to equip?")
+        for i, value in enumerate(player.inventory[0]):
+            print(i + 1, value[-3])
+        selection = int(input("> "))
+        if 1 > selection > len(player.inventory[0]):
+            clear()
+            print("Invalid selection!")
+            pause()
+        elif player.has_weapon_equipped:
+            clear()
+            print(f"{player.desc_name} unequipped {player.equipped_weapon[0][-3]}")
+            player.unequip_weapon(player.equipped_weapon)
+            player.equip_weapon(player.inventory[0][selection - 1])
+            print(f"{player.desc_name} equipped {player.equipped_weapon[0][-3]}")
+            pause()
+        else:
+            clear()
+            player.equip_weapon(player.inventory[0][selection - 1])
+            print(f"{player.desc_name} equipped {player.equipped_weapon[0][-3]}")
+            pause()
+
+    elif selection == '3':
+        clear()
+        print("What would you like to equip?")
+        for i, value in enumerate(player.inventory[1]):
+            print(i + 1, value[-3])
+        selection = int(input("> "))
+        if 1 > selection > len(player.inventory[1]):
+            clear()
+            print("Invalid selection!")
+            pause()
+        elif player.has_armor_equipped:
+            clear()
+            print(f"{player.desc_name} unequipped {player.equipped_armor[0][-3]}")
+            player.unequip_weapon(player.equipped_weapon)
+            player.equip_weapon(player.inventory[1][selection - 1])
+            print(f"{player.desc_name} equipped {player.equipped_armor[0][-3]}")
+            pause()
+        else:
+            clear()
+            player.equip_weapon(player.inventory[1][selection - 1])
+            print(f"{player.desc_name} equipped {player.equipped_armor[0][-3]}")
+            pause()
 
 
 def skill_menu(player):
@@ -465,9 +537,9 @@ def skill_menu(player):
         clear()
         print("Equipped techniques:")
         for i, value in enumerate(player.equipped_skills):
-            print(i + 1, value)
+            print(i + 1, value[0])
         print("============================================================")
         print("Learned techniques:")
-        for i in player.learned_skills:
-            print(i)
+        for i, value in enumerate(player.learned_skills):
+            print(i + 1, value[0])
         pause()

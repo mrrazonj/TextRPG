@@ -106,7 +106,7 @@ class Enemy(Entity):
 
     def show_loot(self):
         menus.clear()
-        print(f"Monster is carrying {self.loot_dropped[-1]}!")
+        print(f"Monster is carrying {self.loot_dropped[-3]}!")
         menus.pause()
 
 
@@ -119,17 +119,19 @@ class Player(Entity):
         self.experience = 0
         self.experience_to_level_up = 20 * ((self.level + 1) ** 1.8)
         self.gold = 0
-        self.inventory = []
+        self.inventory = [[], []]
         self.equipped_skills = []
         self.learned_skills = []
 
         self.unallocated_stat = 0
         self.unallocated_skill = 2
 
+        self.has_rare_weapon_equipped = False
+        self.has_rare_armor_equipped = False
         self.has_weapon_equipped = False
         self.has_armor_equipped = False
-        self.equipped_weapon = ""
-        self.equipped_armor = ""
+        self.equipped_weapon = []
+        self.equipped_armor = []
         self.armor_slot = 0
         self.weapon_slot = 0
 
@@ -146,30 +148,36 @@ class Player(Entity):
     def add_str(self):
         self.stat_str += 1
         self.unallocated_stat -= 1
+        self.init_stats()
 
     def add_dex(self):
         self.stat_dex += 1
         self.unallocated_stat -= 1
+        self.init_stats()
 
     def add_con(self):
         self.stat_con += 1
         self.unallocated_stat -= 1
+        self.init_stats()
 
     def add_int(self):
         self.stat_int += 1
         self.unallocated_stat -= 1
+        self.init_stats()
 
     def add_luk(self):
         self.stat_luk += 1
         self.unallocated_stat -= 1
-
-    def show_inventory(self):
-        pass
+        self.init_stats()
 
     def equip_weapon(self, hp_bonus, ap_bonus, spd_bonus, atk_bonus,
-                     def_bonus, item_id, item_name):
+                     def_bonus, item_id, item_name, item_type, item_rarity):
+        if item_rarity == 1:
+            self.has_rare_weapon_equipped = True
+
         self.has_weapon_equipped = True
-        self.equipped_weapon = item_name
+        self.equipped_weapon.append([hp_bonus, ap_bonus, spd_bonus, atk_bonus, def_bonus, item_id, item_name,
+                                    item_type, item_rarity])
         self.weapon_slot = item_id
         self.combat_hp += hp_bonus
         self.combat_ap += ap_bonus
@@ -178,9 +186,13 @@ class Player(Entity):
         self.combat_def += def_bonus
 
     def equip_armor(self, hp_bonus, ap_bonus, spd_bonus, atk_bonus,
-                    def_bonus, item_id, item_name):
+                    def_bonus, item_id, item_name, item_type, item_rarity):
+        if item_rarity == 1:
+            self.has_rare_armor_equipped = True
+
         self.has_armor_equipped = True
-        self.equipped_armor = item_name
+        self.equipped_armor.append([hp_bonus, ap_bonus, spd_bonus, atk_bonus, def_bonus, item_id, item_name,
+                                    item_type, item_rarity])
         self.armor_slot = item_id
         self.combat_hp += hp_bonus
         self.combat_ap += ap_bonus
@@ -189,9 +201,12 @@ class Player(Entity):
         self.combat_def += def_bonus
 
     def unequip_weapon(self, hp_bonus, ap_bonus, spd_bonus, atk_bonus,
-                       def_bonus, item_id, item_name):
+                       def_bonus, item_id, item_name, item_type, item_rarity):
+        if item_rarity == 1:
+            self.has_rare_weapon_equipped = False
+
         self.has_weapon_equipped = False
-        self.equipped_weapon = ""
+        del self.equipped_weapon[0]
         self.weapon_slot = 0
         self.combat_hp -= hp_bonus
         self.combat_ap -= ap_bonus
@@ -200,9 +215,11 @@ class Player(Entity):
         self.combat_def -= def_bonus
 
     def unequip_armor(self, hp_bonus, ap_bonus, spd_bonus, atk_bonus,
-                      def_bonus, item_id, item_name):
+                      def_bonus, item_id, item_name, item_type, item_rarity):
+        if item_rarity == 1:
+            self.has_rare_armor_equipped = False
         self.has_armor_equipped = False
-        self.equipped_armor = ""
+        del self.equipped_armor[0]
         self.armor_slot = 0
         self.combat_hp -= hp_bonus
         self.combat_ap -= ap_bonus
