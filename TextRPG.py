@@ -48,6 +48,7 @@ if __name__ == '__main__':
                         menus.character_menu(player)
                     elif world_selection == 2:
                         is_correct_world_input = True
+                        # TODO
                     elif world_selection == 3:
                         player_location = world_db.dict_place[menus.travel_menu(player_location[0], player_location[2])]
                         is_correct_world_input = True
@@ -58,6 +59,7 @@ if __name__ == '__main__':
                     world_selection = int(input("> "))
                     if world_selection == 1:
                         is_correct_world_input = True
+                        # TODO
                     elif world_selection == 2:
                         is_correct_world_input = True
                         enemy = classes.Enemy(*menus.spawn_monster(player_location[3]))

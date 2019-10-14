@@ -117,6 +117,8 @@ class Player(Entity):
                          desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk)
 
         self.experience = 0
+        self.experience_to_level_up = 20 * ((self.level + 1) ** 1.8)
+        self.gold = 0
         self.inventory = []
         self.equipped_skills = []
         self.learned_skills = []
@@ -132,9 +134,14 @@ class Player(Entity):
         self.weapon_slot = 0
 
     def level_up(self):
+        menus.clear()
+        print(f"{self.desc_name} leveled up!")
+        print("Gained 11 attribute and 1 skill points!")
         self.experience = 0
+        self.experience_to_level_up = 20 * ((self.level + 1) ** 1.8)
         self.unallocated_stat += 11
         self.unallocated_skill += 1
+        menus.pause()
 
     def add_str(self):
         self.stat_str += 1

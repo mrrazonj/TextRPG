@@ -53,8 +53,8 @@ def travel_menu(place_name, place_id):
 def character_menu(player):
     list_character_menu = [
         "Manage Inventory",
-        "View Stats",
-        "View Skills",
+        "Manage Stats",
+        "Manage Skills",
         "Save",
         "Exit Menu",
         "Quit"
@@ -68,13 +68,16 @@ def character_menu(player):
             print(i + 1, value)
         selection = int(input("> "))
         if selection == 1:
+            # TODO
             is_correct_input = True
         elif selection == 2:
+            # TODO
             is_correct_input = True
         elif selection == 3:
             skill_menu(player)
             is_correct_input = True
         elif selection == 4:
+            # TODO
             is_correct_input = True
         elif selection == 5:
             is_correct_input = True
@@ -153,7 +156,8 @@ def character_creation():
     return [1, desc_name, *specs_list]
 
 
-def player_turn(player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, is_in_battle):
+def player_turn(player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp, enemy_atk, enemy_def, enemy_ap,
+                is_in_battle):
     # Turn initialization
     list_combat_selection = ["Technique", "Magic", "Check loot", "Items", "Flee"]
     list_combat_move_helper = ["null", "Opening Move", "Follow-up Move", "Finishing Move"]
@@ -169,6 +173,7 @@ def player_turn(player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, is_in_b
         print(f"{player.desc_name}'s HP: {player_hp}/{player.combat_hp}\t\t", f"{enemy.desc_name}'s HP: "
                                                                               f"{enemy_hp}/{enemy.combat_hp}")
         print(f"Remaining AP: {player_ap} \t\t {list_combat_move_helper[move_order]}")
+        print("============================================================")
         print("What would you like to do?")
         for i, command in enumerate(list_combat_selection):
             print(i + 1, command)
@@ -186,11 +191,13 @@ def player_turn(player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, is_in_b
                 break
 
         elif selection == 2:
+            # TODO
             pass
         elif selection == 3:
             enemy.show_loot()
             player_ap -= 1
         elif selection == 4:
+            # TODO
             pass
         elif selection == 5:
             flee_probability = random.random()
@@ -209,10 +216,12 @@ def player_turn(player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, is_in_b
         if move_order > 3:
             move_order = 1
 
-    return player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, is_in_battle
+    return player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp, enemy_atk, enemy_def, enemy_ap, \
+        is_in_battle
 
 
-def enemy_turn(player, enemy, player_hp, enemy_hp, enemy_ap, enemy_heal_charges, is_enemy_spec_used):
+def enemy_turn(player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp, enemy_atk, enemy_def, enemy_ap,
+               enemy_heal_charges, is_enemy_spec_used):
     # Turn initialization
     enemy_ap += enemy.combat_ap
     # Turn flags
@@ -274,38 +283,71 @@ def enemy_turn(player, enemy, player_hp, enemy_hp, enemy_ap, enemy_heal_charges,
                 print(f"Enemy desperately attacked {player.desc_name} for {enemy.combat_atk} absolute damage!")
                 pause()
 
-    return player_hp, enemy_hp, enemy_ap, enemy_heal_charges, is_enemy_spec_used
+    return player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp, enemy_atk, enemy_def,\
+        enemy_ap, enemy_heal_charges, is_enemy_spec_used
 
 
 def battle_menu(player, enemy):
     # ==========Initialize Stats===========
     player_hp = player.combat_hp
-    enemy_hp = enemy.combat_hp
+    player_atk = player.combat_atk
+    player_def = player.combat_def
     player_ap = 0
+    enemy_hp = enemy.combat_hp
+    enemy_atk = enemy.combat_atk
+    enemy_def = enemy.combat_def
     enemy_ap = 0
     # ===========Battle Flags==============
     is_in_battle = True
     enemy_heal_charges = 2
     is_enemy_spec_used = False
+    battle_debuffs = []
 
     if player.combat_spd > enemy.combat_spd:
         while enemy_hp > 0 and player_hp > 0 and is_in_battle:
-            turn_computations = player_turn(player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, is_in_battle)
-            player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, is_in_battle = turn_computations
+            turn_computations = player_turn(player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp,
+                                            enemy_atk, enemy_def, enemy_ap, is_in_battle)
+            player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp, enemy_atk, enemy_def, enemy_ap,\
+                is_in_battle = turn_computations
             if not is_in_battle:
                 break
             clear()
-            turn_computations = enemy_turn(player, enemy, player_hp, enemy_hp, enemy_ap, enemy_heal_charges,
-                                           is_enemy_spec_used)
-            player_hp, enemy_hp, enemy_ap, enemy_heal_charges, is_enemy_spec_used = turn_computations
+            turn_computations = enemy_turn(player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp,
+                                           enemy_atk, enemy_def, enemy_ap, enemy_heal_charges, is_enemy_spec_used)
+            player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp, enemy_atk, enemy_def, enemy_ap,\
+                enemy_heal_charges, is_enemy_spec_used = turn_computations
     else:
         while enemy_hp > 0 and player_hp > 0 and is_in_battle:
-            turn_computations = enemy_turn(player, enemy, player_hp, enemy_hp, enemy_ap, enemy_heal_charges,
-                                           is_enemy_spec_used)
-            player_hp, enemy_hp, enemy_ap, enemy_heal_charges, is_enemy_spec_used = turn_computations
+            turn_computations = enemy_turn(player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp,
+                                           enemy_atk, enemy_def, enemy_ap, enemy_heal_charges, is_enemy_spec_used)
+            player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp, enemy_atk, enemy_def, enemy_ap,\
+                enemy_heal_charges, is_enemy_spec_used = turn_computations
             clear()
-            turn_computations = player_turn(player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, is_in_battle)
-            player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, is_in_battle = turn_computations
+            turn_computations = player_turn(player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp,
+                                            enemy_atk, enemy_def, enemy_ap, is_in_battle)
+            player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp, enemy_atk, enemy_def, enemy_ap,\
+                is_in_battle = turn_computations
+
+    if player_hp <= 0:
+        clear()
+        print("Game Over")
+        pause()
+        sys.exit(0)
+    elif enemy_hp <= 0:
+        clear()
+        player.experience += 30 * (enemy.level * 3)
+        print(f"{30 * (enemy.level * 3)} experience gained!")
+        if player.experience > player.experience_to_level_up:
+            player.level_up()
+
+        player.gold += 5 * (enemy.level * 1.5)
+        print(f"{5 * (enemy.level * 1.5)} gold received!")
+        pause()
+
+        if enemy.loot_dropped[-1] is not "none":
+            player.inventory.append(enemy.loot_dropped)
+            print(f"{enemy.loot_dropped[-1]} obtained!")
+            pause()
 
 
 def spawn_monster(place_level):
@@ -383,6 +425,7 @@ def skill_menu(player):
             pause()
 
     elif selection == '2':
+        clear()
         print("You have the following techniques currently equipped: ")
         for i, value in enumerate(player.equipped_skills):
             print(i + 1, value[0])

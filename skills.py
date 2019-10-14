@@ -77,6 +77,26 @@ def bash(player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, order):
         return player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, end_turn
 
 
+def rush(player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, order):
+    # TODO
+    pass
+
+
+def execute(player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, order):
+    # TODO
+    pass
+
+
+def reckless_onslaught(player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, order):
+    # TODO
+    pass
+
+
+def chaotic_drive(player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, order):
+    # TODO
+    pass
+
+
 dict_common_skills = {
     "Normal Attack": ["Normal Attack", 1, 0, normal_attack],
     "Bide": ["Bide", 1, 1, bide],
@@ -84,8 +104,8 @@ dict_common_skills = {
 
 dict_skills = {
     "Warrior": [["Bash", 1, 1, bash],
-                ["Rush", 11, 3],
-                ["Execute", 21, 5],
-                ["Reckless Onslaught", 31, 5],
-                ["Chaotic Drive", 40, 7]]
+                ["Rush", 11, 3, rush],
+                ["Execute", 21, 5, execute],
+                ["Reckless Onslaught", 31, 5, reckless_onslaught],
+                ["Chaotic Drive", 40, 7, chaotic_drive]]
 }
