@@ -3,6 +3,7 @@ import sys
 
 import random
 import world_db
+import skills
 
 
 def clear():
@@ -152,10 +153,12 @@ def character_creation():
     return [1, desc_name, *specs_list]
 
 
-def player_turn(player, enemy, player_hp, enemy_hp, player_ap, is_in_battle):
+def player_turn(player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, is_in_battle):
     # Turn initialization
     list_combat_selection = ["Technique", "Magic", "Check loot", "Items", "Flee"]
+    list_combat_move_helper = ["null", "Opening Move", "Follow-up Move", "Finishing Move"]
     player_ap += player.combat_ap
+    move_order = 1
 
     clear()
     print(f"{player.desc_name}'s turn!")
@@ -163,14 +166,25 @@ def player_turn(player, enemy, player_hp, enemy_hp, player_ap, is_in_battle):
 
     while enemy_hp > 0 and player_hp > 0 and player_ap > 0 and is_in_battle:
         clear()
-        print(f"{player.desc_name}'s HP: {player_hp}\t\t", f"{enemy.desc_name}'s HP: {enemy_hp}")
-        print(f"Remaining AP: {player_ap}")
+        print(f"{player.desc_name}'s HP: {player_hp}/{player.combat_hp}\t\t", f"{enemy.desc_name}'s HP: "
+                                                                              f"{enemy_hp}/{enemy.combat_hp}")
+        print(f"Remaining AP: {player_ap} \t\t {list_combat_move_helper[move_order]}")
         print("What would you like to do?")
         for i, command in enumerate(list_combat_selection):
             print(i + 1, command)
         selection = int(input("> "))
         if selection == 1:
-            pass
+            clear()
+            print("What would you like to use?")
+            for i, technique in enumerate(player.equipped_skills):
+                print(i+1, technique[0])
+            selection = int(input("> "))
+            move_computation = player.equipped_skills[selection - 1][3](player, enemy, player_hp, player_ap,
+                                                                        enemy_hp, enemy_ap, move_order)
+            player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, end_turn = move_computation
+            if end_turn:
+                break
+
         elif selection == 2:
             pass
         elif selection == 3:
@@ -191,7 +205,11 @@ def player_turn(player, enemy, player_hp, enemy_hp, player_ap, is_in_battle):
                 pause()
                 player_ap = 0
 
-    return player_hp, enemy_hp, player_ap, is_in_battle
+        move_order += 1
+        if move_order > 3:
+            move_order = 1
+
+    return player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, is_in_battle
 
 
 def enemy_turn(player, enemy, player_hp, enemy_hp, enemy_ap, enemy_heal_charges, is_enemy_spec_used):
@@ -272,8 +290,8 @@ def battle_menu(player, enemy):
 
     if player.combat_spd > enemy.combat_spd:
         while enemy_hp > 0 and player_hp > 0 and is_in_battle:
-            turn_computations = player_turn(player, enemy, player_hp, enemy_hp, player_ap, is_in_battle)
-            player_hp, enemy_hp, player_ap, is_in_battle = turn_computations
+            turn_computations = player_turn(player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, is_in_battle)
+            player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, is_in_battle = turn_computations
             if not is_in_battle:
                 break
             clear()
@@ -286,8 +304,8 @@ def battle_menu(player, enemy):
                                            is_enemy_spec_used)
             player_hp, enemy_hp, enemy_ap, enemy_heal_charges, is_enemy_spec_used = turn_computations
             clear()
-            turn_computations = player_turn(player, enemy, player_hp, enemy_hp, player_ap, is_in_battle)
-            player_hp, enemy_hp, player_ap, is_in_battle = turn_computations
+            turn_computations = player_turn(player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, is_in_battle)
+            player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, is_in_battle = turn_computations
 
 
 def spawn_monster(place_level):
@@ -323,7 +341,10 @@ def skill_menu(player):
         "View Techniques"
     ]
 
-    list_learnable_skills = world_db.dict_skills[player.desc_job]
+    list_learnable_skills = skills.dict_skills[player.desc_job]
+    if skills.dict_common_skills["Normal Attack"] not in list_learnable_skills:
+        for value in skills.dict_common_skills:
+            list_learnable_skills.append(skills.dict_common_skills[value])
 
     clear()
     print("What would you like to do?")
@@ -342,7 +363,7 @@ def skill_menu(player):
             clear()
             print("Invalid selection!")
             pause()
-        elif list_learnable_skills[learn_selection - 1][0] in player.learned_skills:
+        elif list_learnable_skills[learn_selection - 1] in player.learned_skills:
             clear()
             print("You already know this technique!")
             pause()
@@ -356,7 +377,7 @@ def skill_menu(player):
             pause()
         else:
             clear()
-            player.learned_skills.append(list_learnable_skills[learn_selection - 1][0])
+            player.learned_skills.append(list_learnable_skills[learn_selection - 1])
             player.unallocated_skill -= list_learnable_skills[learn_selection - 1][2]
             print(f"You have successfully learned {list_learnable_skills[learn_selection - 1][0]}!")
             pause()
@@ -364,11 +385,11 @@ def skill_menu(player):
     elif selection == '2':
         print("You have the following techniques currently equipped: ")
         for i, value in enumerate(player.equipped_skills):
-            print(i + 1, value)
+            print(i + 1, value[0])
         print("============================================================")
         print("Which technique would you like to equip?")
         for i, value in enumerate(player.learned_skills):
-            print(i + 1, value)
+            print(i + 1, value[0])
         equip_selection = int(input("> "))
         if player.learned_skills[equip_selection - 1] in player.equipped_skills:
             clear()
@@ -394,7 +415,7 @@ def skill_menu(player):
 
             clear()
             player.equipped_skills.append(player.learned_skills[equip_selection - 1])
-            print(f"Successfully equipped {player.learned_skills[equip_selection - 1]}")
+            print(f"Successfully equipped {player.learned_skills[equip_selection - 1][0]}")
             pause()
 
     elif selection == '3':

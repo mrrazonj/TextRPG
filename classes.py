@@ -118,11 +118,11 @@ class Player(Entity):
 
         self.experience = 0
         self.inventory = []
-        self.equipped_skills = ["Normal Attack", "Bide"]
-        self.learned_skills = ["Normal Attack", "Bide"]
+        self.equipped_skills = []
+        self.learned_skills = []
 
         self.unallocated_stat = 0
-        self.unallocated_skill = 0
+        self.unallocated_skill = 2
 
         self.has_weapon_equipped = False
         self.has_armor_equipped = False
