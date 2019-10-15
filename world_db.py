@@ -2,6 +2,7 @@ from collections import defaultdict
 
 dict_item_id = defaultdict(lambda: [0, 0, 0, 0, 0, 0, "none", 0, 0])
 dict_item_id.update({
+    # TODO Finish up to 40 item dict
     # HP, AP, Spd, Atk, Def, ID, Name, Type, Rarity
     0: [0, 0, 0, 0, 0, 0, "none", 0, 0],
     1: [0, 1, 4, 25, 0, 1, "Rusty Axe", 0, 0],
@@ -17,10 +18,12 @@ dict_item_id.update({
 })
 
 dict_rare_item_id = defaultdict(lambda: [0, 0, 0, 0, 0, 0, "none", 0, 0])
-dict_item_id.update({
+dict_rare_item_id.update({
+    # TODO Finish up to 40 rare item dict
     # HP, AP, Spd, Atk, Def, ID, Name, Rarity
     0: [0, 0, 0, 0, 0, 0, "none", 0, 0],
     1: [0, 1, 6, 40, 10, 11, "Executioner's Axe", 0, 1],
+    2: [100, 1, 3, 50, 20, 12, "Knight's Broadsword", 0, 1],
     3: [0, 3, 12, 20, 12, 13, "Elven Bow", 0, 1],
     4: [0, 1, 6, 125, 9, 14, "Purification Staff", 0, 1],
     5: [120, 1, 5, 60, 15, 15, "Exorcism Rod", 0, 1],

@@ -24,6 +24,10 @@ class Entity:
         self.desc_job = desc_job
         self.level = level
 
+        self.attack_buff_remaining_turns = 0
+        self.defense_buff_remaining_turns = 0
+        self.has_permanent_atk_buff = False
+
     def show_stats(self):
         menus.clear()
         print("========================================")
@@ -67,10 +71,16 @@ class Entity:
             self.combat_atk = self.base_atk + (self.stat_int * 3)
         self.combat_def = self.base_def + (self.stat_con * 4)
 
+    def reset_flags(self):
+        self.attack_buff_remaining_turns = 0
+        self.defense_buff_remaining_turns = 0
+
+        self.has_permanent_atk_buff = False
+
 
 class Enemy(Entity):
     def __init__(self, level, desc_name, desc_race, base_hp, base_ap, base_spd, base_atk, base_def,
-                 desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk, loot, has_rare):
+                 desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk, loot, has_rare, is_boss):
         super().__init__(level, desc_name, desc_race, base_hp, base_ap, base_spd, base_atk, base_def,
                          desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk)
 
@@ -81,6 +91,9 @@ class Enemy(Entity):
             self.loot_dropped = world_db.dict_rare_item_id[loot]
         else:
             self.loot_dropped = world_db.dict_item_id[loot]
+
+        if is_boss:
+            self.is_boss = True
 
     def update_stats(self):
         dict_job_level_modifiers = {

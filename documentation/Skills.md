@@ -51,14 +51,14 @@ Warrior Techniques
 ```
 1. Deals 80% attack damage, reduces enemy defense by 25-40% for the current turn, costs 1 AP
 2. Deals 125% attack damage, reduces enemy AP by 1 for every 80 damage dealt, costs 2 AP
-3. Deals 150% attack damage, 2% + [STR * 0.20] chance to nullify enemy AP income for its following turn, costs 4 AP
+3. Deals 150% attack damage, 10% + [STR * 0.20] chance to nullify enemy AP income for its following turn, costs 4 AP
 ```
 #### Rush (Lv 11-20)
 ```
 1. Deals 50% attack damage 2x, 30% + [DEX] chance to attack for a third time for 75% attack damage, costs 1 AP
-2. Deals 70% attack damage 2x, 45% + [DEX] chance to attack for a third time for 75% attack damage
-   and another 20% + [DEX] chance to attack for a fourth time for 80% attack damage, costs 3 AP
-3. Deals absolute 90% attack damage 4x, costs 5 AP
+2. Deals 70% attack damage 2x, 45% + [DEX] chance to attack for a third time for 85% attack damage
+   and another 20% + [DEX] chance to attack for a fourth time for 75% attack damage, costs 3 AP
+3. Deals 320% absolute attack damage, costs 5 AP
 ```
 #### Execute (Lv 21-30)
 ```

@@ -162,40 +162,51 @@ def player_turn(player, enemy, player_hp, player_atk, player_def, player_ap, ene
     list_combat_selection = ["Technique", "Magic", "Check loot", "Items", "Flee"]
     list_combat_move_helper = ["null", "Opening Move", "Follow-up Move", "Finishing Move"]
     player_ap += player.combat_ap
-    move_order = 1
+    order = 1
 
     clear()
     print(f"{player.desc_name}'s turn!")
     pause()
 
     while enemy_hp > 0 and player_hp > 0 and player_ap > 0 and is_in_battle:
+        # Action initialization
+        player_atk, player_def = skills.remove_buff(player, player_atk, player_def, player.attack_buff_remaining_turns,
+                                                    player.defense_buff_remaining_turns)
+        player.attack_buff_remaining_turns, player.defense_buff_remaining_turns = \
+            skills.tick_buff_duration(player.attack_buff_remaining_turns, player.defense_buff_remaining_turns)
+
         clear()
         print(f"{player.desc_name}'s HP: {player_hp}/{player.combat_hp}\t\t", f"{enemy.desc_name}'s HP: "
                                                                               f"{enemy_hp}/{enemy.combat_hp}")
-        print(f"Remaining AP: {player_ap} \t\t {list_combat_move_helper[move_order]}")
+        print(f"Remaining AP: {player_ap} \t\t {list_combat_move_helper[order]}")
         print("============================================================")
         print("What would you like to do?")
         for i, command in enumerate(list_combat_selection):
             print(i + 1, command)
         selection = int(input("> "))
+
         if selection == 1:
             clear()
             print("What would you like to use?")
             for i, technique in enumerate(player.equipped_skills):
                 print(i+1, technique[0])
             selection = int(input("> "))
-            move_computation = player.equipped_skills[selection - 1][3](player, enemy, player_hp, player_ap,
-                                                                        enemy_hp, enemy_ap, move_order)
-            player, enemy, player_hp, player_ap, enemy_hp, enemy_ap, end_turn = move_computation
+            move_computation = player.equipped_skills[selection - 1][3](player, enemy, player_hp, player_atk,
+                                                                        player_def, player_ap, enemy_hp, enemy_atk,
+                                                                        enemy_def, enemy_ap, order)
+            player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp, enemy_atk, enemy_def, enemy_ap, \
+                end_turn = move_computation
             if end_turn:
                 break
 
         elif selection == 2:
             # TODO battle magic
             pass
+
         elif selection == 3:
             enemy.show_loot()
             player_ap -= 1
+
         elif selection == 4:
             # TODO battle consumables
             pass
@@ -212,9 +223,9 @@ def player_turn(player, enemy, player_hp, player_atk, player_def, player_ap, ene
                 pause()
                 player_ap = 0
 
-        move_order += 1
-        if move_order > 3:
-            move_order = 1
+        order += 1
+        if order > 3:
+            order = 1
 
     return player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp, enemy_atk, enemy_def, enemy_ap, \
         is_in_battle
@@ -328,6 +339,8 @@ def battle_menu(player, enemy):
             player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp, enemy_atk, enemy_def, enemy_ap,\
                 is_in_battle = turn_computations
 
+    player.reset_flags()
+
     if player_hp <= 0:
         clear()
         print("Game Over")
@@ -375,7 +388,7 @@ def spawn_monster(place_level):
         monster_loot_id = 0
         has_rare = False
 
-    return [monster_level, monster_name, *monster_race, *monster_job, monster_loot_id, has_rare]
+    return [monster_level, monster_name, *monster_race, *monster_job, monster_loot_id, has_rare, False]
 
 
 def inventory_menu(player):
