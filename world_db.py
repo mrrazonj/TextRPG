@@ -20,7 +20,7 @@ dict_item_id.update({
 dict_rare_item_id = defaultdict(lambda: [0, 0, 0, 0, 0, 0, "none", 0, 0])
 dict_rare_item_id.update({
     # TODO Finish up to 40 rare item dict
-    # HP, AP, Spd, Atk, Def, ID, Name, Rarity
+    # HP, AP, Spd, Atk, Def, ID, Name, Type, Rarity
     0: [0, 0, 0, 0, 0, 0, "none", 0, 0],
     1: [0, 1, 6, 40, 10, 11, "Executioner's Axe", 0, 1],
     2: [100, 1, 3, 50, 20, 12, "Knight's Broadsword", 0, 1],

@@ -154,6 +154,7 @@ def character_creation():
                     specs_list.append(spec_dict[spec_selected])
 
     return [31, desc_name, *specs_list]
+    # TODO reset integer to 1 when game finished
 
 
 def player_turn(player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp, enemy_atk, enemy_def, enemy_ap,
@@ -378,10 +379,10 @@ def spawn_monster(place_level):
         monster_level = 40
 
     loot_probability = random.random()
-    if loot_probability > 0.90:
+    if loot_probability > 0.50:  # TODO Revert probabilities to 0.90 and 0.66 when game finished
         monster_loot_id = random.randint(place_level, place_level + 10)
         has_rare = True
-    elif loot_probability >= 0.66:
+    elif loot_probability >= 0.33:
         monster_loot_id = random.randint(place_level, place_level + 10)
         has_rare = False
     else:
@@ -428,7 +429,7 @@ def inventory_menu(player):
         elif player.has_weapon_equipped:
             clear()
             print(f"{player.desc_name} unequipped {player.equipped_weapon[0][-3]}")
-            player.unequip_weapon(*player.equipped_weapon)
+            player.unequip_weapon(*player.equipped_weapon[0])
             player.equip_weapon(*player.inventory[0][selection - 1])
             print(f"{player.desc_name} equipped {player.equipped_weapon[0][-3]}")
             pause()
@@ -451,7 +452,7 @@ def inventory_menu(player):
         elif player.has_armor_equipped:
             clear()
             print(f"{player.desc_name} unequipped {player.equipped_armor[0][-3]}")
-            player.unequip_armor(*player.equipped_armor)
+            player.unequip_armor(*player.equipped_armor[0])
             player.equip_armor(*player.inventory[1][selection - 1])
             print(f"{player.desc_name} equipped {player.equipped_armor[0][-3]}")
             pause()
