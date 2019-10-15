@@ -153,7 +153,7 @@ def character_creation():
                     is_desc_final = True
                     specs_list.append(spec_dict[spec_selected])
 
-    return [1, desc_name, *specs_list]
+    return [31, desc_name, *specs_list]
 
 
 def player_turn(player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp, enemy_atk, enemy_def, enemy_ap,

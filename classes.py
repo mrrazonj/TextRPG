@@ -92,8 +92,7 @@ class Enemy(Entity):
         else:
             self.loot_dropped = world_db.dict_item_id[loot]
 
-        if is_boss:
-            self.is_boss = True
+        self.is_boss = True if is_boss else False
 
     def update_stats(self):
         dict_job_level_modifiers = {
@@ -137,7 +136,7 @@ class Player(Entity):
         self.learned_skills = []
 
         self.unallocated_stat = 0
-        self.unallocated_skill = 2
+        self.unallocated_skill = 40
 
         self.has_rare_weapon_equipped = False
         self.has_rare_armor_equipped = False
