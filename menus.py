@@ -130,11 +130,11 @@ def opening_scene():
 
 def character_creation():
     dict_race_selection = {}
-    for i, key in enumerate(world_db.dict_race):
+    for i, key in enumerate(world_db.dict_normal_race):
         dict_race_selection[i + 1] = key
 
     dict_job_selection = {}
-    for i, key in enumerate(world_db.dict_job):
+    for i, key in enumerate(world_db.dict_normal_job):
         dict_job_selection[i + 1] = key
 
     is_name_final = False
@@ -386,8 +386,8 @@ def battle_menu(player, enemy):
 def spawn_monster(place_level):
     list_monster_name = ["Alfred", "Eugene", "Vincent", "Dennis", "Jericho", "Jeremiah"]
 
-    monster_race = world_db.dict_race[random.choice(list(world_db.dict_race))]
-    monster_job = world_db.dict_job[random.choice(list(world_db.dict_job))]
+    monster_race = world_db.dict_normal_race[random.choice(list(world_db.dict_normal_race))]
+    monster_job = world_db.dict_normal_job[random.choice(list(world_db.dict_normal_job))]
     monster_name = random.choice(list(list_monster_name))
     monster_level = random.randint(place_level - 2, place_level + 5)
     if monster_level < 1:
@@ -407,6 +407,22 @@ def spawn_monster(place_level):
         has_rare = False
 
     return [monster_level, monster_name, *monster_race, *monster_job, monster_loot_id, has_rare, False]
+
+
+def spawn_boss(place_level):
+    dict_boss_prairie = {
+        # Level, Name, Race, HP, AP, Spd, Atk, Def, Job, Str, Dex, Con, Int, Luk, LootID, Rarity, Is Boss
+        1: [random.randint(7, 14), "Khunwok",
+            *world_db.dict_boss_race[random.choice(world_db.list_race_choices)],
+            *world_db.dict_boss_job[random.choice(world_db.list_job_choices)],
+            random.choice([0, 1]), True, True],
+        11: [random.randint(17, 24), "Bekamaz",
+             *world_db.dict_boss_race[random.choice(world_db.list_race_choices)],
+             *world_db.dict_boss_job[random.choice(world_db.list_job_choices)],
+             random.choice([2, 3]), True, True]
+    }
+
+    return dict_boss_prairie[place_level]
 
 
 def inventory_menu(player):

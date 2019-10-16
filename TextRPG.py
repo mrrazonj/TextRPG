@@ -17,8 +17,8 @@ if __name__ == '__main__':
         menus.opening_scene()
 
         character_data = menus.character_creation()
-        player = classes.Player(character_data[0], character_data[1], *world_db.dict_race[character_data[2]],
-                                *world_db.dict_job[character_data[3]])
+        player = classes.Player(character_data[0], character_data[1], *world_db.dict_normal_race[character_data[2]],
+                                *world_db.dict_normal_job[character_data[3]])
         player.show_stats()
 
         list_town_selection = [
@@ -64,7 +64,9 @@ if __name__ == '__main__':
 
                     if world_selection == 1:
                         is_correct_world_input = True
-                        # TODO boss fights
+                        enemy = classes.Enemy(*menus.spawn_boss(player_location[3]))
+                        enemy.show_stats()
+                        menus.battle_menu(player, enemy)
 
                     elif world_selection == 2:
                         is_correct_world_input = True

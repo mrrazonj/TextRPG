@@ -84,15 +84,18 @@ class Enemy(Entity):
         super().__init__(level, desc_name, desc_race, base_hp, base_ap, base_spd, base_atk, base_def,
                          desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk)
 
-        self.update_stats()
-
-        self.has_rare = has_rare
-        if self.has_rare:
-            self.loot_dropped = world_db.dict_rare_item_id[loot]
+        if not is_boss:
+            self.is_boss = False
+            if self.has_rare:
+                self.loot_dropped = world_db.dict_rare_item_id[loot]
+            else:
+                self.loot_dropped = world_db.dict_item_id[loot]
         else:
-            self.loot_dropped = world_db.dict_item_id[loot]
+            self.is_boss = True
+            self. loot_dropped = world_db.dict_boss_item_id[loot]
+            self.has_rare = has_rare
 
-        self.is_boss = True if is_boss else False
+        self.update_stats()
 
     def update_stats(self):
         dict_job_level_modifiers = {
@@ -101,13 +104,27 @@ class Enemy(Entity):
             "Knight": [2, 1, 5, 1, 1],
             "Ranger": [1, 5, 1, 1, 2],
             "Mage": [1, 1, 1, 6, 1],
-            "Priest": [2, 2, 2, 2, 2]
+            "Priest": [2, 2, 2, 2, 2],
+        }
+
+        dict_boss_level_modifiers = {
+            "Warrior": [5, 3, 1, 1, 1],
+            "Knight": [3, 1, 6, 1, 1],
+            "Ranger": [3, 6, 1, 1, 2],
+            "Mage": [1, 1, 1, 10, 1],
+            "Priest": [4, 4, 4, 4, 4],
+            "Berserker": [7, 4, 0, 0, 0],
+            "Warlock": [3, 3, 3, 6, 1]
         }
 
         list_attributes = [self.stat_str, self.stat_dex, self.stat_con, self.stat_int, self.stat_luk]
+        if not self.is_boss:
+            for i, value in enumerate(dict_job_level_modifiers[self.desc_job]):
+                list_attributes[i] += value * self.level
+        else:
+            for i, value in enumerate(dict_boss_level_modifiers[self.desc_job]):
+                list_attributes[i] += value * self.level
 
-        for i, value in enumerate(dict_job_level_modifiers[self.desc_job]):
-            list_attributes[i] += value * self.level
         self.stat_str = list_attributes[0]
         self.stat_dex = list_attributes[1]
         self.stat_con = list_attributes[2]

@@ -34,7 +34,14 @@ dict_rare_item_id.update({
     10: [150, 1, 6, 20, 30, 20, "Priest's Vestments", 1, 1]
 })
 
-dict_race = {
+dict_boss_item_id = defaultdict(lambda: [0, 0, 0, 0, 0, 0, "none", 0, 0])
+dict_boss_item_id.update({
+    # HP, AP, Spd, Atk, Def, ID, Name, Type, Rarity
+    0: [200, 2, 5, 55, 15, 21, "Excalipoor", 0, 1],
+    1: [400, 1, 4, 15, 45, 22, "Avalawn", 1, 1]
+})
+
+dict_normal_race = {
     # Name, Str, Dex, Con, Int, Luk
     "Human": ["Human", 125, 3, 8, 6, 5],
     "Elf": ["Elf", 100, 4, 12, 5, 3],
@@ -44,7 +51,7 @@ dict_race = {
     "Kobold": ["Kobold", 70, 3, 9, 4, 2]
 }
 
-dict_job = {
+dict_normal_job = {
     # Name, Str, Dex, Con, Int, Luk
     "Warrior": ["Warrior", 20, 14, 12, 8, 12],
     "Knight": ["Knight", 16, 7, 20, 10, 13],
@@ -52,6 +59,39 @@ dict_job = {
     "Ranger": ["Ranger", 11, 18, 10, 12, 15],
     "Priest": ["Priest", 11, 13, 16, 14, 12]
 }
+
+dict_boss_race = {
+    "Human": ["Human", 250, 5, 16, 12, 10],
+    "Elf": ["Elf", 200, 6, 21, 10, 8],
+    "Orc": ["Orc", 500, 3, 14, 24, 15],
+    "Troll": ["Troll", 700, 2, 7, 30, 20],
+    "Dwarf": ["Dwarf", 300, 4, 15, 15, 15],
+    "Kobold": ["Kobold", 150, 4, 14, 9, 6],
+    "Centaur": ["Centaur", 550, 4, 18, 22, 15],
+    "Undead": ["Undead", 250, 4, 13, 15, 15],
+    "Lamia": ["Lamia", 350, 5, 20, 10, 10],
+    "Sahuagin": ["Sahuagin", 400, 3, 15, 16, 12],
+    "Minotaur": ["Minotaur", 550, 3, 12, 25, 18],
+    "Giant": ["Giant", 1200, 1, 5, 80, 40]
+}
+
+list_race_choices = []
+for key in dict_boss_race:
+    list_race_choices.append(key)
+
+dict_boss_job = {
+    "Warrior": ["Warrior", 35, 22, 20, 15, 12],
+    "Knight": ["Knight", 30, 14, 40, 18, 13],
+    "Mage": ["Mage", 12, 20, 12, 64, 11],
+    "Ranger": ["Ranger", 26, 31, 15, 20, 15],
+    "Priest": ["Priest", 24, 25, 28, 32, 12],
+    "Berserker": ["Berserker", 42, 24, 10, 10, 8],
+    "Warlock": ["Warlock", 15, 15, 16, 57, 15]
+}
+
+list_job_choices = []
+for key in dict_boss_job:
+    list_job_choices.append(key)
 
 dict_place = {
     # Name, Type, ID, Level
