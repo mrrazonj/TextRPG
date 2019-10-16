@@ -642,6 +642,7 @@ def attribute_menu(player):
         selection = input("> ")
 
         if selection == '1':
+            print(f"Experience: {player.experience}/{player.experience_to_level_up}")
             player.show_stats()
 
         elif selection == '2':

@@ -144,7 +144,7 @@ class Player(Entity):
                          desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk)
 
         self.experience = 0
-        self.experience_to_level_up = 20 * ((self.level + 1) ** 1.8)
+        self.experience_to_level_up = int(round(20 * ((self.level + 1) ** 1.8)))
         self.gold = 0
         self.inventory = [[], []]
         self.equipped_skills = []
