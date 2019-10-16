@@ -84,16 +84,14 @@ class Enemy(Entity):
         super().__init__(level, desc_name, desc_race, base_hp, base_ap, base_spd, base_atk, base_def,
                          desc_job, stat_str, stat_dex, stat_con, stat_int, stat_luk)
 
-        if not is_boss:
-            self.is_boss = False
-            if self.has_rare:
-                self.loot_dropped = world_db.dict_rare_item_id[loot]
-            else:
-                self.loot_dropped = world_db.dict_item_id[loot]
+        self.has_rare = True if has_rare else False
+        self.is_boss = True if is_boss else False
+        if self.is_boss:
+            self.loot_dropped = world_db.dict_boss_item_id[loot]
+        elif self.has_rare:
+            self.loot_dropped = world_db.dict_rare_item_id[loot]
         else:
-            self.is_boss = True
-            self. loot_dropped = world_db.dict_boss_item_id[loot]
-            self.has_rare = has_rare
+            self.loot_dropped = world_db.dict_item_id[loot]
 
         self.update_stats()
 
