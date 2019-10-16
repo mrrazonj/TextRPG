@@ -21,18 +21,19 @@ def pause():
 
 
 def invalid_input():
-    clear()
     print("Invalid input!")
     pause()
 
 
 def get_int_input():
-    try:
-        selection = int(input("> "))
-    except ValueError:
-        invalid_input()
-    else:
-        return selection
+    while True:
+        try:
+            selection = int(input("> "))
+        except ValueError:
+            invalid_input()
+            return 0
+        else:
+            return selection
 
 
 def travel_menu(place_name, place_id):
@@ -86,7 +87,7 @@ def character_menu(player):
             inventory_menu(player)
             is_correct_input = True
         elif selection == 2:
-            # TODO manage attributes
+            attribute_menu(player)
             is_correct_input = True
         elif selection == 3:
             skill_menu(player)
@@ -437,11 +438,14 @@ def inventory_menu(player):
         elif selection == '2':
             clear()
             print("What would you like to equip?")
+            print("0 Exit Menu")
             for i, value in enumerate(player.inventory[0]):
                 print(i + 1, value[-3])
             selection = get_int_input()
 
-            if 1 > selection > len(player.inventory[0]):
+            if selection == 0:
+                pass
+            elif 0 > selection or selection > len(player.inventory[0]):
                 clear()
                 print("Invalid selection!")
                 pause()
@@ -461,11 +465,14 @@ def inventory_menu(player):
         elif selection == '3':
             clear()
             print("What would you like to equip?")
+            print("0 Exit Menu")
             for i, value in enumerate(player.inventory[1]):
                 print(i + 1, value[-3])
             selection = get_int_input()
 
-            if 1 > selection > len(player.inventory[1]):
+            if selection == 0:
+                pass
+            elif 0 > selection or selection > len(player.inventory[1]):
                 clear()
                 print("Invalid selection!")
                 pause()
@@ -571,7 +578,7 @@ def skill_menu(player):
                         print("You can only equip a maximum of 5 techniques!")
                         print("Select a technique to unequip:")
                         for i, value in enumerate(player.equipped_skills):
-                            print(i + 1, value)
+                            print(i + 1, value[0])
                         unequip_selection = get_int_input()
 
                         if 1 > unequip_selection or unequip_selection > len(player.equipped_skills):
@@ -580,14 +587,14 @@ def skill_menu(player):
                             pause()
                         else:
                             clear()
-                            print(f"Successfully unequipped {player.equipped_skills[unequip_selection - 1]}")
+                            print(f"Successfully unequipped {player.equipped_skills[unequip_selection - 1][0]}")
                             del player.equipped_skills[unequip_selection - 1]
                             pause()
 
-                        clear()
-                        player.equipped_skills.append(player.learned_skills[equip_selection - 1])
-                        print(f"Successfully equipped {player.learned_skills[equip_selection - 1][0]}")
-                        pause()
+                    clear()
+                    player.equipped_skills.append(player.learned_skills[equip_selection - 1])
+                    print(f"Successfully equipped {player.learned_skills[equip_selection - 1][0]}")
+                    pause()
 
         elif selection == '3':
             clear()
@@ -601,4 +608,57 @@ def skill_menu(player):
             pause()
 
         elif selection == '4':
+            break
+
+
+def attribute_menu(player):
+    list_menu_selection = [
+        "View Stats",
+        "Train Attributes",
+        "Exit Menu"
+    ]
+
+    while True:
+        clear()
+        print("What would you like to do?")
+        for i, value in enumerate(list_menu_selection):
+            print(i + 1, value)
+        selection = input("> ")
+
+        if selection == '1':
+            player.show_stats()
+
+        elif selection == '2':
+            dict_train_attributes = {
+                1: ["Strength", player.add_str],
+                2: ["Dexterity", player.add_dex],
+                3: ["Constitution", player.add_con],
+                4: ["Intelligence", player.add_int],
+                5: ["Luck", player.add_luk]
+            }
+
+            while True:
+                clear()
+                print("============================================================")
+                print(f"Strength: {player.stat_str}\t\tDexterity: {player.stat_dex}")
+                print(f"Constitution: {player.stat_con}\tIntelligence: {player.stat_int}")
+                print(f"Luck: {player.stat_luk}")
+                print(f"Remaining Attribute Points: {player.unallocated_stat}")
+                print("============================================================")
+                print("Which attribute would you like to train?")
+                print("0 Exit Menu")
+                for key in dict_train_attributes:
+                    print(key, dict_train_attributes[key][0])
+                selection = get_int_input()
+
+                if selection == 0:
+                    break
+                elif 0 > selection or selection > len(dict_train_attributes):
+                    clear()
+                    print("Invalid selection!")
+                    pause()
+                else:
+                    dict_train_attributes[selection][1]()
+
+        elif selection == '3':
             break

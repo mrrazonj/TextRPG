@@ -135,8 +135,8 @@ class Player(Entity):
         self.equipped_skills = []
         self.learned_skills = []
 
-        self.unallocated_stat = 0
-        self.unallocated_skill = 40  # TODO set to 0 when game finished
+        self.unallocated_stat = 330  # TODO set to 0 when game finished
+        self.unallocated_skill = 30  # TODO set to 0 when game finished
 
         self.has_rare_weapon_equipped = False
         self.has_rare_armor_equipped = False
