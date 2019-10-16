@@ -412,80 +412,86 @@ def inventory_menu(player):
     list_menu_selection = [
         "View Inventory",
         "Equip Weapon",
-        "Equip Armor"
+        "Equip Armor",
+        "Exit Menu"
     ]
 
-    clear()
-    print("What would you like to do?")
-    for i, value in enumerate(list_menu_selection):
-        print(i + 1, value)
-    selection = input("> ")
-
-    if selection == '1':
+    while True:
         clear()
-        print("Weapons: ")
-        for i, value in enumerate(player.inventory[0]):
-            print(i + 1, value[-3])
-        print("============================================================")
-        print("Armors: ")
-        for i, value in enumerate(player.inventory[1]):
-            print(i + 1, value[-3])
-        pause()
+        print("What would you like to do?")
+        for i, value in enumerate(list_menu_selection):
+            print(i + 1, value)
+        selection = input("> ")
 
-    elif selection == '2':
-        clear()
-        print("What would you like to equip?")
-        for i, value in enumerate(player.inventory[0]):
-            print(i + 1, value[-3])
-        selection = get_int_input()
-
-        if 1 > selection > len(player.inventory[0]):
+        if selection == '1':
             clear()
-            print("Invalid selection!")
-            pause()
-        elif player.has_weapon_equipped:
-            clear()
-            print(f"{player.desc_name} unequipped {player.equipped_weapon[0][-3]}")
-            player.unequip_weapon(*player.equipped_weapon[0])
-            player.equip_weapon(*player.inventory[0][selection - 1])
-            print(f"{player.desc_name} equipped {player.equipped_weapon[0][-3]}")
-            pause()
-        else:
-            clear()
-            player.equip_weapon(*player.inventory[0][selection - 1])
-            print(f"{player.desc_name} equipped {player.equipped_weapon[0][-3]}")
+            print("Weapons: ")
+            for i, value in enumerate(player.inventory[0]):
+                print(i + 1, value[-3])
+            print("============================================================")
+            print("Armors: ")
+            for i, value in enumerate(player.inventory[1]):
+                print(i + 1, value[-3])
             pause()
 
-    elif selection == '3':
-        clear()
-        print("What would you like to equip?")
-        for i, value in enumerate(player.inventory[1]):
-            print(i + 1, value[-3])
-        selection = get_int_input()
+        elif selection == '2':
+            clear()
+            print("What would you like to equip?")
+            for i, value in enumerate(player.inventory[0]):
+                print(i + 1, value[-3])
+            selection = get_int_input()
 
-        if 1 > selection > len(player.inventory[1]):
+            if 1 > selection > len(player.inventory[0]):
+                clear()
+                print("Invalid selection!")
+                pause()
+            elif player.has_weapon_equipped:
+                clear()
+                print(f"{player.desc_name} unequipped {player.equipped_weapon[0][-3]}")
+                player.unequip_weapon(*player.equipped_weapon[0])
+                player.equip_weapon(*player.inventory[0][selection - 1])
+                print(f"{player.desc_name} equipped {player.equipped_weapon[0][-3]}")
+                pause()
+            else:
+                clear()
+                player.equip_weapon(*player.inventory[0][selection - 1])
+                print(f"{player.desc_name} equipped {player.equipped_weapon[0][-3]}")
+                pause()
+
+        elif selection == '3':
             clear()
-            print("Invalid selection!")
-            pause()
-        elif player.has_armor_equipped:
-            clear()
-            print(f"{player.desc_name} unequipped {player.equipped_armor[0][-3]}")
-            player.unequip_armor(*player.equipped_armor[0])
-            player.equip_armor(*player.inventory[1][selection - 1])
-            print(f"{player.desc_name} equipped {player.equipped_armor[0][-3]}")
-            pause()
-        else:
-            clear()
-            player.equip_armor(*player.inventory[1][selection - 1])
-            print(f"{player.desc_name} equipped {player.equipped_armor[0][-3]}")
-            pause()
+            print("What would you like to equip?")
+            for i, value in enumerate(player.inventory[1]):
+                print(i + 1, value[-3])
+            selection = get_int_input()
+
+            if 1 > selection > len(player.inventory[1]):
+                clear()
+                print("Invalid selection!")
+                pause()
+            elif player.has_armor_equipped:
+                clear()
+                print(f"{player.desc_name} unequipped {player.equipped_armor[0][-3]}")
+                player.unequip_armor(*player.equipped_armor[0])
+                player.equip_armor(*player.inventory[1][selection - 1])
+                print(f"{player.desc_name} equipped {player.equipped_armor[0][-3]}")
+                pause()
+            else:
+                clear()
+                player.equip_armor(*player.inventory[1][selection - 1])
+                print(f"{player.desc_name} equipped {player.equipped_armor[0][-3]}")
+                pause()
+
+        elif selection == '4':
+            break
 
 
 def skill_menu(player):
     list_menu_selection = [
         "Learn Techniques",
         "Equip Techniques",
-        "View Techniques"
+        "View Techniques",
+        "Exit Menu"
     ]
 
     list_learnable_skills = skills.dict_skills[player.desc_job]
@@ -493,89 +499,106 @@ def skill_menu(player):
         for value in skills.dict_common_skills:
             list_learnable_skills.append(skills.dict_common_skills[value])
 
-    clear()
-    print("What would you like to do?")
-    for i, value in enumerate(list_menu_selection):
-        print(i + 1, value)
-    selection = input("> ")
-
-    if selection == '1':
+    while True:
         clear()
-        print("Which technique would you like to learn?")
-        print(f"Remaining skillpoints: {player.unallocated_skill}")
-        for i, key in enumerate(list_learnable_skills):
-            print(i + 1, key[0])
-        learn_selection = get_int_input()
+        print("What would you like to do?")
+        for i, value in enumerate(list_menu_selection):
+            print(i + 1, value)
+        selection = input("> ")
 
-        if learn_selection < 1 or learn_selection > len(list_learnable_skills):
-            clear()
-            print("Invalid selection!")
-            pause()
-        elif list_learnable_skills[learn_selection - 1] in player.learned_skills:
-            clear()
-            print("You already know this technique!")
-            pause()
-        elif list_learnable_skills[learn_selection - 1][1] > player.level:
-            clear()
-            print(f"You need to be level {list_learnable_skills[learn_selection - 1][1]} to learn this technique!")
-            pause()
-        elif player.unallocated_skill < list_learnable_skills[learn_selection - 1][2]:
-            clear()
-            print("You don't have enough skill points!")
-            pause()
-        else:
-            clear()
-            player.learned_skills.append(list_learnable_skills[learn_selection - 1])
-            player.unallocated_skill -= list_learnable_skills[learn_selection - 1][2]
-            print(f"You have successfully learned {list_learnable_skills[learn_selection - 1][0]}!")
-            pause()
-
-    elif selection == '2':
-        clear()
-        print("You have the following techniques currently equipped: ")
-        for i, value in enumerate(player.equipped_skills):
-            print(i + 1, value[0])
-        print("============================================================")
-        print("Which technique would you like to equip?")
-        for i, value in enumerate(player.learned_skills):
-            print(i + 1, value[0])
-        equip_selection = get_int_input()
-
-        if player.learned_skills[equip_selection - 1] in player.equipped_skills:
-            clear()
-            print("You already have this technique equipped!")
-            pause()
-        else:
-            if len(player.equipped_skills) >= 5:
+        if selection == '1':
+            while True:
                 clear()
-                print("You can only equip a maximum of 5 techniques!")
-                print("Select a technique to unequip:")
-                for i, value in enumerate(player.equipped_skills):
-                    print(i + 1, value)
-                unequip_selection = get_int_input()
+                print("Which technique would you like to learn?")
+                print(f"Remaining skillpoints: {player.unallocated_skill}")
+                print("0 Exit Menu")
+                for i, key in enumerate(list_learnable_skills):
+                    print(i + 1, key[0])
+                learn_selection = get_int_input()
 
-                if 1 > unequip_selection or unequip_selection > len(player.equipped_skills):
+                if learn_selection == 0:
+                    break
+                elif learn_selection < 0 or learn_selection > len(list_learnable_skills):
                     clear()
                     print("Invalid selection!")
                     pause()
+                elif list_learnable_skills[learn_selection - 1] in player.learned_skills:
+                    clear()
+                    print("You already know this technique!")
+                    pause()
+                elif list_learnable_skills[learn_selection - 1][1] > player.level:
+                    clear()
+                    print(f"You need to be level {list_learnable_skills[learn_selection - 1][1]} to learn this "
+                          f"technique!")
+                    pause()
+                elif player.unallocated_skill < list_learnable_skills[learn_selection - 1][2]:
+                    clear()
+                    print("You don't have enough skill points!")
+                    pause()
                 else:
                     clear()
-                    print(f"Successfully unequipped {player.equipped_skills[unequip_selection - 1]}")
-                    del player.equipped_skills[unequip_selection - 1]
+                    player.learned_skills.append(list_learnable_skills[learn_selection - 1])
+                    player.unallocated_skill -= list_learnable_skills[learn_selection - 1][2]
+                    print(f"You have successfully learned {list_learnable_skills[learn_selection - 1][0]}!")
                     pause()
 
+        elif selection == '2':
+            while True:
                 clear()
-                player.equipped_skills.append(player.learned_skills[equip_selection - 1])
-                print(f"Successfully equipped {player.learned_skills[equip_selection - 1][0]}")
-                pause()
+                print("You have the following techniques currently equipped: ")
+                for i, value in enumerate(player.equipped_skills):
+                    print(i + 1, value[0])
+                print("============================================================")
+                print("Which technique would you like to equip?")
+                print("0 Exit Menu")
+                for i, value in enumerate(player.learned_skills):
+                    print(i + 1, value[0])
+                equip_selection = get_int_input()
 
-    elif selection == '3':
-        clear()
-        print("Equipped techniques:")
-        for i, value in enumerate(player.equipped_skills):
-            print(i + 1, value[0])
-        print("============================================================")
-        print("Learned techniques:")
-        for i, value in enumerate(player.learned_skills):
-            print(i + 1, value[0])
-        pause()
+                if equip_selection == 0:
+                    break
+                elif equip_selection < 0 or equip_selection > len(player.learned_skills):
+                    clear()
+                    print("Invalid selection!")
+                    pause()
+                elif player.learned_skills[equip_selection - 1] in player.equipped_skills:
+                    clear()
+                    print("You already have this technique equipped!")
+                    pause()
+                else:
+                    if len(player.equipped_skills) >= 5:
+                        clear()
+                        print("You can only equip a maximum of 5 techniques!")
+                        print("Select a technique to unequip:")
+                        for i, value in enumerate(player.equipped_skills):
+                            print(i + 1, value)
+                        unequip_selection = get_int_input()
+
+                        if 1 > unequip_selection or unequip_selection > len(player.equipped_skills):
+                            clear()
+                            print("Invalid selection!")
+                            pause()
+                        else:
+                            clear()
+                            print(f"Successfully unequipped {player.equipped_skills[unequip_selection - 1]}")
+                            del player.equipped_skills[unequip_selection - 1]
+                            pause()
+
+                        clear()
+                        player.equipped_skills.append(player.learned_skills[equip_selection - 1])
+                        print(f"Successfully equipped {player.learned_skills[equip_selection - 1][0]}")
+                        pause()
+
+        elif selection == '3':
+            clear()
+            print("Equipped techniques:")
+            for i, value in enumerate(player.equipped_skills):
+                print(i + 1, value[0])
+            print("============================================================")
+            print("Learned techniques:")
+            for i, value in enumerate(player.learned_skills):
+                print(i + 1, value[0])
+            pause()
+
+        elif selection == '4':
+            break
