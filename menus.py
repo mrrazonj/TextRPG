@@ -20,6 +20,12 @@ def pause():
         _ = input()
 
 
+def invalid_input():
+    clear()
+    print("Invalid input!")
+    pause()
+
+
 def travel_menu(place_name, place_id):
     dict_place_selection = {}
     for i, key in enumerate(world_db.dict_place):
@@ -40,14 +46,18 @@ def travel_menu(place_name, place_id):
                 break
             else:
                 print(i, dict_place_selection[i])
-        selection = int(input("> "))
-        if selection > place_id + 1 or selection < place_id - 1:
-            print("You have entered an invalid number, please try again.")
-            pause()
+        try:
+            selection = int(input("> "))
+        except TypeError:
+            invalid_input()
         else:
-            selected = dict_place_selection[selection]
-            is_correct_input = True
-            return selected
+            if selection > place_id + 1 or selection < place_id - 1:
+                print("You have entered an invalid number, please try again.")
+                pause()
+            else:
+                selected = dict_place_selection[selection]
+                is_correct_input = True
+                return selected
 
 
 def character_menu(player):
@@ -66,23 +76,27 @@ def character_menu(player):
         print(f"What would you like to do, {player.desc_name}?")
         for i, value in enumerate(list_character_menu):
             print(i + 1, value)
-        selection = int(input("> "))
-        if selection == 1:
-            inventory_menu(player)
-            is_correct_input = True
-        elif selection == 2:
-            # TODO manage attributes
-            is_correct_input = True
-        elif selection == 3:
-            skill_menu(player)
-            is_correct_input = True
-        elif selection == 4:
-            # TODO memory dump save
-            is_correct_input = True
-        elif selection == 5:
-            is_correct_input = True
-        elif selection == 6:
-            sys.exit(0)
+        try:
+            selection = int(input("> "))
+        except TypeError:
+            invalid_input()
+        else:
+            if selection == 1:
+                inventory_menu(player)
+                is_correct_input = True
+            elif selection == 2:
+                # TODO manage attributes
+                is_correct_input = True
+            elif selection == 3:
+                skill_menu(player)
+                is_correct_input = True
+            elif selection == 4:
+                # TODO memory dump save
+                is_correct_input = True
+            elif selection == 5:
+                is_correct_input = True
+            elif selection == 6:
+                sys.exit(0)
 
 
 def main_menu():
@@ -141,17 +155,21 @@ def character_creation():
             print(f"Now you must choose your {spec}")
             for i in spec_dict:
                 print(i, spec_dict[i])
-            spec_selected = int(input("> "))
-            clear()
-            if spec_selected > len(spec_dict) or spec_selected < 1:
-                print("You have entered an invalid number, please try again.")
-                continue
+            try:
+                spec_selected = int(input("> "))
+            except TypeError:
+                invalid_input()
             else:
-                print(f"You have selected {spec_dict[spec_selected]} as your {spec}.")
-                finalization_input = input(f"You cannot change your {spec} beyond this point, continue? (y/n) >")
-                if finalization_input == 'y':
-                    is_desc_final = True
-                    specs_list.append(spec_dict[spec_selected])
+                clear()
+                if spec_selected > len(spec_dict) or spec_selected < 1:
+                    print("You have entered an invalid number, please try again.")
+                    continue
+                else:
+                    print(f"You have selected {spec_dict[spec_selected]} as your {spec}.")
+                    finalization_input = input(f"You cannot change your {spec} beyond this point, continue? (y/n) >")
+                    if finalization_input == 'y':
+                        is_desc_final = True
+                        specs_list.append(spec_dict[spec_selected])
 
     return [31, desc_name, *specs_list]
     # TODO reset integer to 1 when game finished
@@ -184,45 +202,52 @@ def player_turn(player, enemy, player_hp, player_atk, player_def, player_ap, ene
         print("What would you like to do?")
         for i, command in enumerate(list_combat_selection):
             print(i + 1, command)
-        selection = int(input("> "))
-
-        if selection == 1:
-            clear()
-            print("What would you like to use?")
-            for i, technique in enumerate(player.equipped_skills):
-                print(i+1, technique[0])
+        try:
             selection = int(input("> "))
-            move_computation = player.equipped_skills[selection - 1][3](player, enemy, player_hp, player_atk,
-                                                                        player_def, player_ap, enemy_hp, enemy_atk,
-                                                                        enemy_def, enemy_ap, order)
-            player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp, enemy_atk, enemy_def, enemy_ap, \
-                end_turn = move_computation
-            if end_turn:
-                break
-
-        elif selection == 2:
-            # TODO battle magic
-            pass
-
-        elif selection == 3:
-            enemy.show_loot()
-            player_ap -= 1
-
-        elif selection == 4:
-            # TODO battle consumables
-            pass
-        elif selection == 5:
-            flee_probability = random.random()
-            if flee_probability >= 0.33:
+        except TypeError:
+            invalid_input()
+        else:
+            if selection == 1:
                 clear()
-                print(f"{player.desc_name} has successfully escaped the battle!")
-                pause()
-                is_in_battle = False
-            else:
-                clear()
-                print(f"{player.desc_name} failed to escape!")
-                pause()
-                player_ap = 0
+                print("What would you like to use?")
+                for i, technique in enumerate(player.equipped_skills):
+                    print(i+1, technique[0])
+                try:
+                    selection = int(input("> "))
+                except TypeError:
+                    invalid_input()
+                else:
+                    move_computation = player.equipped_skills[selection - 1][3](player, enemy, player_hp, player_atk,
+                                                                                player_def, player_ap, enemy_hp,
+                                                                                enemy_atk, enemy_def, enemy_ap, order)
+                    player, enemy, player_hp, player_atk, player_def, player_ap, enemy_hp, enemy_atk, enemy_def, \
+                        enemy_ap, end_turn = move_computation
+                    if end_turn:
+                        break
+
+            elif selection == 2:
+                # TODO battle magic
+                pass
+
+            elif selection == 3:
+                enemy.show_loot()
+                player_ap -= 1
+
+            elif selection == 4:
+                # TODO battle consumables
+                pass
+            elif selection == 5:
+                flee_probability = random.random()
+                if flee_probability >= 0.33:
+                    clear()
+                    print(f"{player.desc_name} has successfully escaped the battle!")
+                    pause()
+                    is_in_battle = False
+                else:
+                    clear()
+                    print(f"{player.desc_name} failed to escape!")
+                    pause()
+                    player_ap = 0
 
         order += 1
         if order > 3:
@@ -421,46 +446,54 @@ def inventory_menu(player):
         print("What would you like to equip?")
         for i, value in enumerate(player.inventory[0]):
             print(i + 1, value[-3])
-        selection = int(input("> "))
-        if 1 > selection > len(player.inventory[0]):
-            clear()
-            print("Invalid selection!")
-            pause()
-        elif player.has_weapon_equipped:
-            clear()
-            print(f"{player.desc_name} unequipped {player.equipped_weapon[0][-3]}")
-            player.unequip_weapon(*player.equipped_weapon[0])
-            player.equip_weapon(*player.inventory[0][selection - 1])
-            print(f"{player.desc_name} equipped {player.equipped_weapon[0][-3]}")
-            pause()
+        try:
+            selection = int(input("> "))
+        except TypeError:
+            invalid_input()
         else:
-            clear()
-            player.equip_weapon(*player.inventory[0][selection - 1])
-            print(f"{player.desc_name} equipped {player.equipped_weapon[0][-3]}")
-            pause()
+            if 1 > selection > len(player.inventory[0]):
+                clear()
+                print("Invalid selection!")
+                pause()
+            elif player.has_weapon_equipped:
+                clear()
+                print(f"{player.desc_name} unequipped {player.equipped_weapon[0][-3]}")
+                player.unequip_weapon(*player.equipped_weapon[0])
+                player.equip_weapon(*player.inventory[0][selection - 1])
+                print(f"{player.desc_name} equipped {player.equipped_weapon[0][-3]}")
+                pause()
+            else:
+                clear()
+                player.equip_weapon(*player.inventory[0][selection - 1])
+                print(f"{player.desc_name} equipped {player.equipped_weapon[0][-3]}")
+                pause()
 
     elif selection == '3':
         clear()
         print("What would you like to equip?")
         for i, value in enumerate(player.inventory[1]):
             print(i + 1, value[-3])
-        selection = int(input("> "))
-        if 1 > selection > len(player.inventory[1]):
-            clear()
-            print("Invalid selection!")
-            pause()
-        elif player.has_armor_equipped:
-            clear()
-            print(f"{player.desc_name} unequipped {player.equipped_armor[0][-3]}")
-            player.unequip_armor(*player.equipped_armor[0])
-            player.equip_armor(*player.inventory[1][selection - 1])
-            print(f"{player.desc_name} equipped {player.equipped_armor[0][-3]}")
-            pause()
+        try:
+            selection = int(input("> "))
+        except TypeError:
+            invalid_input()
         else:
-            clear()
-            player.equip_armor(*player.inventory[1][selection - 1])
-            print(f"{player.desc_name} equipped {player.equipped_armor[0][-3]}")
-            pause()
+            if 1 > selection > len(player.inventory[1]):
+                clear()
+                print("Invalid selection!")
+                pause()
+            elif player.has_armor_equipped:
+                clear()
+                print(f"{player.desc_name} unequipped {player.equipped_armor[0][-3]}")
+                player.unequip_armor(*player.equipped_armor[0])
+                player.equip_armor(*player.inventory[1][selection - 1])
+                print(f"{player.desc_name} equipped {player.equipped_armor[0][-3]}")
+                pause()
+            else:
+                clear()
+                player.equip_armor(*player.inventory[1][selection - 1])
+                print(f"{player.desc_name} equipped {player.equipped_armor[0][-3]}")
+                pause()
 
 
 def skill_menu(player):
@@ -487,29 +520,33 @@ def skill_menu(player):
         print(f"Remaining skillpoints: {player.unallocated_skill}")
         for i, key in enumerate(list_learnable_skills):
             print(i + 1, key[0])
-        learn_selection = int(input("> "))
-        if 1 > learn_selection > len(list_learnable_skills):
-            clear()
-            print("Invalid selection!")
-            pause()
-        elif list_learnable_skills[learn_selection - 1] in player.learned_skills:
-            clear()
-            print("You already know this technique!")
-            pause()
-        elif list_learnable_skills[learn_selection - 1][1] > player.level:
-            clear()
-            print(f"You need to be level {list_learnable_skills[learn_selection - 1][1]} to learn this technique!")
-            pause()
-        elif player.unallocated_skill < list_learnable_skills[learn_selection - 1][2]:
-            clear()
-            print("You don't have enough skill points!")
-            pause()
+        try:
+            learn_selection = int(input("> "))
+        except TypeError:
+            invalid_input()
         else:
-            clear()
-            player.learned_skills.append(list_learnable_skills[learn_selection - 1])
-            player.unallocated_skill -= list_learnable_skills[learn_selection - 1][2]
-            print(f"You have successfully learned {list_learnable_skills[learn_selection - 1][0]}!")
-            pause()
+            if 1 > learn_selection > len(list_learnable_skills):
+                clear()
+                print("Invalid selection!")
+                pause()
+            elif list_learnable_skills[learn_selection - 1] in player.learned_skills:
+                clear()
+                print("You already know this technique!")
+                pause()
+            elif list_learnable_skills[learn_selection - 1][1] > player.level:
+                clear()
+                print(f"You need to be level {list_learnable_skills[learn_selection - 1][1]} to learn this technique!")
+                pause()
+            elif player.unallocated_skill < list_learnable_skills[learn_selection - 1][2]:
+                clear()
+                print("You don't have enough skill points!")
+                pause()
+            else:
+                clear()
+                player.learned_skills.append(list_learnable_skills[learn_selection - 1])
+                player.unallocated_skill -= list_learnable_skills[learn_selection - 1][2]
+                print(f"You have successfully learned {list_learnable_skills[learn_selection - 1][0]}!")
+                pause()
 
     elif selection == '2':
         clear()
@@ -520,33 +557,41 @@ def skill_menu(player):
         print("Which technique would you like to equip?")
         for i, value in enumerate(player.learned_skills):
             print(i + 1, value[0])
-        equip_selection = int(input("> "))
-        if player.learned_skills[equip_selection - 1] in player.equipped_skills:
-            clear()
-            print("You already have this technique equipped!")
-            pause()
+        try:
+            equip_selection = int(input("> "))
+        except TypeError:
+            invalid_input()
         else:
-            if len(player.equipped_skills) >= 5:
+            if player.learned_skills[equip_selection - 1] in player.equipped_skills:
                 clear()
-                print("You can only equip a maximum of 5 techniques!")
-                print("Select a technique to unequip:")
-                for i, value in enumerate(player.equipped_skills):
-                    print(i + 1, value)
-                unequip_selection = int(input("> "))
-                if 1 > unequip_selection > len(player.equipped_skills):
+                print("You already have this technique equipped!")
+                pause()
+            else:
+                if len(player.equipped_skills) >= 5:
                     clear()
-                    print("Invalid selection!")
-                    pause()
-                else:
-                    clear()
-                    print(f"Successfully unequipped {player.equipped_skills[unequip_selection - 1]}")
-                    del player.equipped_skills[unequip_selection - 1]
-                    pause()
+                    print("You can only equip a maximum of 5 techniques!")
+                    print("Select a technique to unequip:")
+                    for i, value in enumerate(player.equipped_skills):
+                        print(i + 1, value)
+                    try:
+                        unequip_selection = int(input("> "))
+                    except TypeError:
+                        invalid_input()
+                    else:
+                        if 1 > unequip_selection > len(player.equipped_skills):
+                            clear()
+                            print("Invalid selection!")
+                            pause()
+                        else:
+                            clear()
+                            print(f"Successfully unequipped {player.equipped_skills[unequip_selection - 1]}")
+                            del player.equipped_skills[unequip_selection - 1]
+                            pause()
 
-            clear()
-            player.equipped_skills.append(player.learned_skills[equip_selection - 1])
-            print(f"Successfully equipped {player.learned_skills[equip_selection - 1][0]}")
-            pause()
+                clear()
+                player.equipped_skills.append(player.learned_skills[equip_selection - 1])
+                print(f"Successfully equipped {player.learned_skills[equip_selection - 1][0]}")
+                pause()
 
     elif selection == '3':
         clear()
