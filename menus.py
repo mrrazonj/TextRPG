@@ -48,7 +48,7 @@ def travel_menu(place_name, place_id):
                 print(i, dict_place_selection[i])
         try:
             selection = int(input("> "))
-        except TypeError:
+        except ValueError:
             invalid_input()
         else:
             if selection > place_id + 1 or selection < place_id - 1:
@@ -78,7 +78,7 @@ def character_menu(player):
             print(i + 1, value)
         try:
             selection = int(input("> "))
-        except TypeError:
+        except ValueError:
             invalid_input()
         else:
             if selection == 1:
@@ -157,7 +157,7 @@ def character_creation():
                 print(i, spec_dict[i])
             try:
                 spec_selected = int(input("> "))
-            except TypeError:
+            except ValueError:
                 invalid_input()
             else:
                 clear()
@@ -204,7 +204,7 @@ def player_turn(player, enemy, player_hp, player_atk, player_def, player_ap, ene
             print(i + 1, command)
         try:
             selection = int(input("> "))
-        except TypeError:
+        except ValueError:
             invalid_input()
         else:
             if selection == 1:
@@ -214,7 +214,7 @@ def player_turn(player, enemy, player_hp, player_atk, player_def, player_ap, ene
                     print(i+1, technique[0])
                 try:
                     selection = int(input("> "))
-                except TypeError:
+                except ValueError:
                     invalid_input()
                 else:
                     move_computation = player.equipped_skills[selection - 1][3](player, enemy, player_hp, player_atk,
@@ -448,7 +448,7 @@ def inventory_menu(player):
             print(i + 1, value[-3])
         try:
             selection = int(input("> "))
-        except TypeError:
+        except ValueError:
             invalid_input()
         else:
             if 1 > selection > len(player.inventory[0]):
@@ -475,7 +475,7 @@ def inventory_menu(player):
             print(i + 1, value[-3])
         try:
             selection = int(input("> "))
-        except TypeError:
+        except ValueError:
             invalid_input()
         else:
             if 1 > selection > len(player.inventory[1]):
@@ -522,7 +522,7 @@ def skill_menu(player):
             print(i + 1, key[0])
         try:
             learn_selection = int(input("> "))
-        except TypeError:
+        except ValueError:
             invalid_input()
         else:
             if 1 > learn_selection > len(list_learnable_skills):
@@ -559,7 +559,7 @@ def skill_menu(player):
             print(i + 1, value[0])
         try:
             equip_selection = int(input("> "))
-        except TypeError:
+        except ValueError:
             invalid_input()
         else:
             if player.learned_skills[equip_selection - 1] in player.equipped_skills:
@@ -575,7 +575,7 @@ def skill_menu(player):
                         print(i + 1, value)
                     try:
                         unequip_selection = int(input("> "))
-                    except TypeError:
+                    except ValueError:
                         invalid_input()
                     else:
                         if 1 > unequip_selection > len(player.equipped_skills):
